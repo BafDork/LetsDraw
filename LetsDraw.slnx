@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="LetsDraw/LetsDraw.vcxproj" />
+  <Project Path="LetsDraw/LetsDraw.vcxproj" Id="9b162a46-c352-446f-8ea2-3ec51e0e4c70" />
 </Solution>
