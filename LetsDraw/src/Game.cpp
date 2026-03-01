@@ -17,13 +17,16 @@ Game::Game(int width, int height)
 {
 }
 
-Game::~Game()
-{
-}
+Game::~Game() = default;
 
 bool Game::Initialize()
 {
-    display = std::make_unique<DisplayWin32>(this, L"My3DApp", clientWidth, clientHeight);
+    display = std::make_unique<DisplayWin32>(
+        this,
+        L"My3DApp",
+        clientWidth,
+        clientHeight);
+
     if (!display->Initialize())
         return false;
 
@@ -75,16 +78,22 @@ bool Game::InitializeD3D()
         return false;
 
     CreateBackBuffer();
-
     return true;
 }
 
 void Game::CreateBackBuffer()
 {
     Microsoft::WRL::ComPtr<ID3D11Texture2D> backTex;
-    swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), &backTex);
 
-    device->CreateRenderTargetView(backTex.Get(), nullptr, &backBuffer);
+    swapChain->GetBuffer(
+        0,
+        __uuidof(ID3D11Texture2D),
+        &backTex);
+
+    device->CreateRenderTargetView(
+        backTex.Get(),
+        nullptr,
+        &backBuffer);
 }
 
 void Game::AddComponent(std::unique_ptr<GameComponent> component)
@@ -102,13 +111,15 @@ void Game::Run()
         {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
+
+            if (msg.message == WM_QUIT)
+                exitRequested = true;
         }
 
-        if (msg.message == WM_QUIT)
-            exitRequested = true;
-
         auto curTime = std::chrono::steady_clock::now();
-        float deltaTime = std::chrono::duration<float>(curTime - prevTime).count();
+        float deltaTime =
+            std::chrono::duration<float>(curTime - prevTime).count();
+
         prevTime = curTime;
 
         Update(deltaTime);
@@ -127,7 +138,8 @@ void Game::Update(float deltaTime)
         float fps = frameCount / totalTime;
 
         wchar_t text[256];
-        swprintf_s(text, L"FPS: %f", fps);
+        swprintf_s(text, L"FPS: %.2f", fps);
+
         SetWindowText(display->GetHWND(), text);
 
         totalTime -= 1.0f;
@@ -136,6 +148,8 @@ void Game::Update(float deltaTime)
 
     for (auto& c : components)
         c->Update(deltaTime);
+
+    input->EndFrame();
 }
 
 void Game::Draw()
@@ -171,8 +185,6 @@ void Game::Exit()
 
 void Game::OnKeyDown(unsigned int key)
 {
-    if (key == 27)
+    if (key == VK_ESCAPE)
         Exit();
-
-    input->AddPressedKey(key);
 }

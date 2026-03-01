@@ -142,6 +142,7 @@
     <ClCompile Include="src\TriangleComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Keys.h" />
     <ClInclude Include="src\DisplayWin32.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\GameComponent.h" />

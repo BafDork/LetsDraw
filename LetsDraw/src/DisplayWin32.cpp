@@ -1,5 +1,6 @@
 #include "DisplayWin32.h"
 #include "Game.h"
+#include "InputDevice.h"
 
 DisplayWin32::DisplayWin32(Game* game,
     const std::wstring& windowName,
@@ -17,9 +18,7 @@ DisplayWin32::DisplayWin32(Game* game,
 DisplayWin32::~DisplayWin32()
 {
     if (hWnd)
-    {
         DestroyWindow(hWnd);
-    }
 }
 
 bool DisplayWin32::Initialize()
@@ -41,7 +40,7 @@ bool DisplayWin32::Initialize()
     if (!RegisterClassEx(&wc))
         return false;
 
-    RECT rect{ 0, 0, clientWidth, clientHeight };
+    RECT rect{ 0,0,clientWidth,clientHeight };
     AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
 
     int posX = (GetSystemMetrics(SM_CXSCREEN) - clientWidth) / 2;
@@ -61,10 +60,7 @@ bool DisplayWin32::Initialize()
         hInstance,
         this);
 
-    if (!hWnd)
-        return false;
-
-    return true;
+    return hWnd != nullptr;
 }
 
 void DisplayWin32::Show()
@@ -74,7 +70,11 @@ void DisplayWin32::Show()
     SetFocus(hWnd);
 }
 
-LRESULT CALLBACK DisplayWin32::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK DisplayWin32::WndProc(
+    HWND hwnd,
+    UINT msg,
+    WPARAM wParam,
+    LPARAM lParam)
 {
     DisplayWin32* window = nullptr;
 
@@ -82,7 +82,11 @@ LRESULT CALLBACK DisplayWin32::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARA
     {
         CREATESTRUCT* cs = reinterpret_cast<CREATESTRUCT*>(lParam);
         window = reinterpret_cast<DisplayWin32*>(cs->lpCreateParams);
-        SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(window));
+
+        SetWindowLongPtr(
+            hwnd,
+            GWLP_USERDATA,
+            reinterpret_cast<LONG_PTR>(window));
     }
     else
     {
@@ -96,7 +100,11 @@ LRESULT CALLBACK DisplayWin32::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARA
     return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
-LRESULT DisplayWin32::MessageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT DisplayWin32::MessageHandler(
+    HWND hwnd,
+    UINT msg,
+    WPARAM wParam,
+    LPARAM lParam)
 {
     switch (msg)
     {
@@ -104,11 +112,52 @@ LRESULT DisplayWin32::MessageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
         PostQuitMessage(0);
         return 0;
 
-    case WM_KEYDOWN:
-        if (game)
-            game->OnKeyDown(static_cast<unsigned int>(wParam));
+    case WM_INPUT:
+    {
+        UINT size = 0;
+
+        GetRawInputData(
+            (HRAWINPUT)lParam,
+            RID_INPUT,
+            nullptr,
+            &size,
+            sizeof(RAWINPUTHEADER));
+
+        BYTE* buffer = new BYTE[size];
+
+        if (GetRawInputData(
+            (HRAWINPUT)lParam,
+            RID_INPUT,
+            buffer,
+            &size,
+            sizeof(RAWINPUTHEADER)) == size)
+        {
+            RAWINPUT* raw =
+                reinterpret_cast<RAWINPUT*>(buffer);
+
+            auto* input = game->GetInput();
+
+            if (raw->header.dwType == RIM_TYPEKEYBOARD)
+            {
+                bool pressed =
+                    !(raw->data.keyboard.Flags & RI_KEY_BREAK);
+
+                input->OnKeyDown(
+                    raw->data.keyboard.VKey,
+                    pressed);
+            }
+            else if (raw->header.dwType == RIM_TYPEMOUSE)
+            {
+                input->OnMouseMove(
+                    raw->data.mouse.lLastX,
+                    raw->data.mouse.lLastY);
+            }
+        }
+
+        delete[] buffer;
         return 0;
     }
+}
 
     return DefWindowProc(hwnd, msg, wParam, lParam);
 }
