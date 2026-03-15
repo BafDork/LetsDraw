@@ -1,23 +1,14 @@
+#include "Display\DisplayWin32.h"
+#include "Display\InputDevice.h"
+#include "Display\Keys.h"
 #include "Game.h"
-#include "DisplayWin32.h"
-#include "InputDevice.h"
 #include "GameComponent.h"
-
-#include <dxgi.h>
-#include <d3dcompiler.h>
-#include <iostream>
-
-#pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "dxgi.lib")
-#pragma comment(lib, "d3dcompiler.lib")
 
 Game::Game(int width, int height)
     : clientWidth(width),
     clientHeight(height)
 {
 }
-
-Game::~Game() = default;
 
 bool Game::Initialize()
 {
@@ -83,7 +74,7 @@ bool Game::InitializeD3D()
 
 void Game::CreateBackBuffer()
 {
-    Microsoft::WRL::ComPtr<ID3D11Texture2D> backTex;
+    ComPtr<ID3D11Texture2D> backTex;
 
     swapChain->GetBuffer(
         0,
@@ -94,11 +85,6 @@ void Game::CreateBackBuffer()
         backTex.Get(),
         nullptr,
         &backBuffer);
-}
-
-void Game::AddComponent(std::unique_ptr<GameComponent> component)
-{
-    components.push_back(std::move(component));
 }
 
 void Game::Run()
@@ -116,10 +102,12 @@ void Game::Run()
                 exitRequested = true;
         }
 
-        auto curTime = std::chrono::steady_clock::now();
-        float deltaTime =
-            std::chrono::duration<float>(curTime - prevTime).count();
+        if (input->IsKeyDown(static_cast<int>(Keys::Escape))) {
+            Exit();
+        }
 
+        auto curTime = std::chrono::steady_clock::now();
+        float deltaTime = std::chrono::duration<float>(curTime - prevTime).count();
         prevTime = curTime;
 
         Update(deltaTime);
@@ -154,23 +142,27 @@ void Game::Update(float deltaTime)
 
 void Game::Draw()
 {
-    D3D11_VIEWPORT vp{};
-    vp.Width = static_cast<float>(clientWidth);
-    vp.Height = static_cast<float>(clientHeight);
-    vp.TopLeftX = 0;
-    vp.TopLeftY = 0;
-    vp.MinDepth = 0.0f;
-    vp.MaxDepth = 1.0f;
+    D3D11_VIEWPORT viewport {};
+    viewport.Width = static_cast<float>(clientWidth);
+    viewport.Height = static_cast<float>(clientHeight);
+    viewport.TopLeftX = 0;
+    viewport.TopLeftY = 0;
+    viewport.MinDepth = 0.0f;
+    viewport.MaxDepth = 1.0f;
 
-    context->RSSetViewports(1, &vp);
+    float color[] = { 0.f, 0.f, 0.f, 1.0f };
 
+    context->RSSetViewports(1, &viewport);
     context->OMSetRenderTargets(1, backBuffer.GetAddressOf(), nullptr);
-
-    float color[] = { totalTime, 0.1f, 0.1f, 1.0f };
     context->ClearRenderTargetView(backBuffer.Get(), color);
 
     for (auto& c : components)
         c->Draw();
+}
+
+void Game::AddComponent(std::unique_ptr<GameComponent> component)
+{
+    components.push_back(std::move(component));
 }
 
 void Game::EndFrame()
@@ -181,10 +173,4 @@ void Game::EndFrame()
 void Game::Exit()
 {
     exitRequested = true;
-}
-
-void Game::OnKeyDown(unsigned int key)
-{
-    if (key == VK_ESCAPE)
-        Exit();
 }

@@ -105,6 +105,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,29 +128,39 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\MyVeryFirstShader.hlsl">
+    <FxCompile Include="Shaders\DefaultShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MySuper3DApp.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="src\DisplayWin32.cpp" />
-    <ClCompile Include="src\Game.cpp" />
-    <ClCompile Include="src\InputDevice.cpp" />
+    <ClCompile Include="src\Display\DisplayWin32.cpp" />
+    <ClCompile Include="src\Game\Game.cpp" />
+    <ClCompile Include="src\Game\TransformComponent.cpp" />
+    <ClCompile Include="src\Display\InputDevice.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\TriangleComponent.cpp" />
+    <ClCompile Include="src\Graphics\RenderableComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Keys.h" />
-    <ClInclude Include="src\DisplayWin32.h" />
-    <ClInclude Include="src\Game.h" />
-    <ClInclude Include="src\GameComponent.h" />
-    <ClInclude Include="src\InputDevice.h" />
-    <ClInclude Include="src\TriangleComponent.h" />
+    <ClInclude Include="src\Display\Keys.h" />
+    <ClInclude Include="src\Game\TransformComponent.h" />
+    <ClInclude Include="src\Display\DisplayWin32.h" />
+    <ClInclude Include="src\Game\Game.h" />
+    <ClInclude Include="src\Game\GameComponent.h" />
+    <ClInclude Include="src\Display\InputDevice.h" />
+    <ClInclude Include="src\Graphics\RenderableComponent.h" />
+    <ClInclude Include="src\Graphics\Vertex.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\directxtk_desktop_win10.2025.10.28.2\build\native\directxtk_desktop_win10.targets" Condition="Exists('..\packages\directxtk_desktop_win10.2025.10.28.2\build\native\directxtk_desktop_win10.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\directxtk_desktop_win10.2025.10.28.2\build\native\directxtk_desktop_win10.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\directxtk_desktop_win10.2025.10.28.2\build\native\directxtk_desktop_win10.targets'))" />
+  </Target>
 </Project>

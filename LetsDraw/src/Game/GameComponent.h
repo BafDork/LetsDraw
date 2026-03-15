@@ -13,7 +13,6 @@ public:
     virtual ~GameComponent() = default;
 
     virtual void Initialize() {}
-    virtual void Reload() {}
     virtual void Update(float deltaTime) {}
     virtual void Draw() {}
     virtual void DestroyResources() {}

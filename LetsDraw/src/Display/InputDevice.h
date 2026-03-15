@@ -1,8 +1,6 @@
 #pragma once
 
 #include <unordered_map>
-#include <utility>
-#include <Windows.h>
 
 class Game;
 
@@ -10,26 +8,23 @@ class InputDevice
 {
 public:
     explicit InputDevice(Game* game);
-    ~InputDevice();
+    ~InputDevice() = default;
 
-    // вызывается из WndProc
     void OnKeyDown(unsigned int vkey, bool pressed);
     void OnMouseMove(int dx, int dy);
 
-    // polling API (используется игрой)
     bool IsKeyDown(unsigned int key) const;
 
-    std::pair<int, int> GetMousePosition() const;
-    std::pair<int, int> GetMouseDelta() const;
+    std::pair<int, int> GetMousePosition() const { return { mouseX, mouseY }; }
+    std::pair<int, int> GetMouseDelta() const { return { mouseDeltaX, mouseDeltaY }; }
 
-    // вызывается каждый кадр из Game::Update
     void EndFrame();
 
 private:
     void RegisterRawInput();
 
 private:
-    Game* game = nullptr;
+    Game* game;
 
     std::unordered_map<unsigned int, bool> keys;
 

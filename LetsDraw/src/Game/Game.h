@@ -1,33 +1,36 @@
 #pragma once
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "dxgi.lib")
 
-#include <wrl.h>
-#include <d3d11.h>
-#include <vector>
-#include <memory>
+#include "Display\InputDevice.h"
+#include "Display\DisplayWin32.h"
+
 #include <chrono>
+#include <d3d11.h>
+#include <dxgi.h>
+#include <vector>
+#include <wrl.h>
 
-class DisplayWin32;
-class InputDevice;
+using Microsoft::WRL::ComPtr;
+
 class GameComponent;
 
 class Game
 {
 public:
     Game(int width, int height);
-    ~Game();
+    ~Game() = default;
 
     bool Initialize();
     void Run();
     void Exit();
 
-    void OnKeyDown(unsigned int key);
+    void AddComponent(std::unique_ptr<GameComponent> component);
 
     ID3D11Device* GetDevice() const { return device.Get(); }
     ID3D11DeviceContext* GetContext() const { return context.Get(); }
     DisplayWin32* GetDisplay() const { return display.get(); }
     InputDevice* GetInput() const { return input.get(); }
-
-    void AddComponent(std::unique_ptr<GameComponent> component);
 
 private:
     bool InitializeD3D();
@@ -45,10 +48,10 @@ private:
 
     std::vector<std::unique_ptr<GameComponent>> components;
 
-    Microsoft::WRL::ComPtr<ID3D11Device> device;
-    Microsoft::WRL::ComPtr<ID3D11DeviceContext> context;
-    Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
-    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> backBuffer;
+    ComPtr<ID3D11Device> device;
+    ComPtr<ID3D11DeviceContext> context;
+    ComPtr<IDXGISwapChain> swapChain;
+    ComPtr<ID3D11RenderTargetView> backBuffer;
 
     bool exitRequested = false;
 
