@@ -1,8 +1,8 @@
-#include "Game\Game.h"
+#include "PongGame\PongGame.h"
 
 int main()
 {
-    Game game(800, 800);
+    PongGame game(800, 800);
 
     if (!game.Initialize())
         return -1;

@@ -9,7 +9,6 @@ class TransformComponent
 {
 public:
     TransformComponent() = default;
-    ~TransformComponent() = default;
 
     void SetPosition(const XMFLOAT3& position);
     void Translate(const XMFLOAT3& delta);
@@ -21,12 +20,12 @@ public:
 
     XMMATRIX GetWorldMatrix() const;
 
-    XMFLOAT3 GetPosition() const { return position; }
-    XMFLOAT3 GetRotation() const { return rotation; }
-    XMFLOAT3 GetScale() const { return scale; }
+    XMFLOAT3 GetPosition() const { return mPosition; }
+    XMFLOAT3 GetRotation() const { return mRotation; }
+    XMFLOAT3 GetScale() const { return mScale; }
 
 private:
-    XMFLOAT3 position{ 0.0f, 0.0f, 0.0f };
-    XMFLOAT3 rotation{ 0.0f, 0.0f, 0.0f };
-    XMFLOAT3 scale{ 1.0f, 1.0f, 1.0f };
+    XMFLOAT3 mPosition{ 0.0f, 0.0f, 0.0f };
+    XMFLOAT3 mRotation{ 0.0f, 0.0f, 0.0f };
+    XMFLOAT3 mScale{ 1.0f, 1.0f, 1.0f };
 };

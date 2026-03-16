@@ -13,14 +13,12 @@ public:
         TransformComponent* transform,
         BoundingBox localBounds);
 
-    ~CollisionComponent() = default;
-
     bool Intersects(const CollisionComponent& other) const;
     bool Intersects(const BoundingBox& other) const;
 
     BoundingBox GetWorldBounds() const;
 
 private:
-    TransformComponent* transform;
-    BoundingBox localBounds;
+    TransformComponent* mTransform;
+    BoundingBox mLocalBounds;
 };

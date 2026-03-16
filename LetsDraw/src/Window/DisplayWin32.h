@@ -3,12 +3,13 @@
 #include <windows.h>
 #include <string>
 
-class Game;
+class GameApp;
 
 class DisplayWin32
 {
 public:
-    DisplayWin32(Game* game,
+    DisplayWin32(
+        GameApp* gameApp,
         const std::wstring& windowName,
         int width,
         int height);
@@ -18,22 +19,22 @@ public:
     bool Initialize();
     void Show();
 
-    HWND GetHWND() const { return hWnd; }
-    int GetClientWidth() const { return clientWidth; }
-    int GetClientHeight() const { return clientHeight; }
+    HWND GetHWND() const { return mHWnd; }
+    int GetClientWidth() const { return mClientWidth; }
+    int GetClientHeight() const { return mClientHeight; }
 
 private:
     static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
     LRESULT MessageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 private:
-    Game* game;
+    GameApp* mGameApp;
 
-    std::wstring windowName;
+    std::wstring mWindowName;
 
-    int clientWidth;
-    int clientHeight;
+    int mClientWidth;
+    int mClientHeight;
 
-    HINSTANCE hInstance;
-    HWND hWnd;
+    HINSTANCE mHInstance;
+    HWND mHWnd;
 };

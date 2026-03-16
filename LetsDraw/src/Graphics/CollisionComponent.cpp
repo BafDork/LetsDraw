@@ -3,9 +3,9 @@
 
 CollisionComponent::CollisionComponent(
     TransformComponent* transform,
-    BoundingBox bounds) : 
-    transform(transform),
-    localBounds(bounds)
+    BoundingBox localBounds) :
+    mTransform(transform),
+    mLocalBounds(localBounds)
 {
 }
 
@@ -13,7 +13,7 @@ BoundingBox CollisionComponent::GetWorldBounds() const
 {
     BoundingBox world;
 
-    localBounds.Transform(world, transform->GetWorldMatrix());
+    mLocalBounds.Transform(world, mTransform->GetWorldMatrix());
 
     return world;
 }

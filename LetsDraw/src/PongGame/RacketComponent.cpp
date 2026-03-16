@@ -1,8 +1,8 @@
 #include "RacketComponent.h"
 
-RacketComponent::RacketComponent(Game* game, float width, float height)
+RacketComponent::RacketComponent(GameApp* gameApp, float width, float height)
     : RenderableComponent(
-        game,
+        gameApp,
         {
             {{ width, height, 0.0f, 1.0f }, {1,1,1,1}},
             {{ 0.0f, height, 0.0f, 1.0f }, {1,1,1,1}},
@@ -17,5 +17,5 @@ RacketComponent::RacketComponent(Game* game, float width, float height)
         { width / 2.0f, height / 2.0f, 0.0f }
     );
 
-    collision = std::make_unique<CollisionComponent>(GetTransform(), box);
+    mCollision = std::make_unique<CollisionComponent>(GetTransform(), box);
 }

@@ -1,24 +1,27 @@
 #include "DisplayWin32.h"
-#include "Game\Game.h"
+#include "Engine\GameApp.h"
 #include "InputDevice.h"
 
-DisplayWin32::DisplayWin32(Game* game,
+DisplayWin32::DisplayWin32(
+	GameApp* gameApp,
 	const std::wstring& windowName,
 	int width,
 	int height)
-	: game(game),
-	windowName(windowName),
-	clientWidth(width),
-	clientHeight(height),
-	hInstance(GetModuleHandle(nullptr)),
-	hWnd(nullptr)
+	: mGameApp(gameApp),
+	mWindowName(windowName),
+	mClientWidth(width),
+	mClientHeight(height),
+	mHInstance(GetModuleHandle(nullptr)),
+	mHWnd(nullptr)
 {
 }
 
 DisplayWin32::~DisplayWin32()
 {
-	if (hWnd)
-		DestroyWindow(hWnd);
+	if (mHWnd)
+	{
+		DestroyWindow(mHWnd);
+	}
 }
 
 bool DisplayWin32::Initialize()
@@ -29,29 +32,29 @@ bool DisplayWin32::Initialize()
 	windowClass.lpfnWndProc = DisplayWin32::WndProc;
 	windowClass.cbClsExtra = 0;
 	windowClass.cbWndExtra = sizeof(LONG_PTR);
-	windowClass.hInstance = hInstance;
+	windowClass.hInstance = mHInstance;
 	windowClass.hIcon = LoadIcon(nullptr, IDI_WINLOGO);
 	windowClass.hIconSm = windowClass.hIcon;
 	windowClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
 	windowClass.hbrBackground = static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH));
 	windowClass.lpszMenuName = nullptr;
-	windowClass.lpszClassName = windowName.c_str();
+	windowClass.lpszClassName = mWindowName.c_str();
 
 	if (!RegisterClassEx(&windowClass))
 	{
 		return false;
 	}
 
-	RECT rect{ 0, 0, clientWidth, clientHeight };
+	RECT rect{ 0, 0, mClientWidth, mClientHeight };
 	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
 
-	int posX = (GetSystemMetrics(SM_CXSCREEN) - clientWidth) / 2;
-	int posY = (GetSystemMetrics(SM_CYSCREEN) - clientHeight) / 2;
+	int posX = (GetSystemMetrics(SM_CXSCREEN) - mClientWidth) / 2;
+	int posY = (GetSystemMetrics(SM_CYSCREEN) - mClientHeight) / 2;
 
-	hWnd = CreateWindowEx(
+	mHWnd = CreateWindowEx(
 		WS_EX_APPWINDOW,
-		windowName.c_str(),
-		windowName.c_str(),
+		mWindowName.c_str(),
+		mWindowName.c_str(),
 		WS_OVERLAPPEDWINDOW,
 		posX,
 		posY,
@@ -59,17 +62,17 @@ bool DisplayWin32::Initialize()
 		rect.bottom - rect.top,
 		nullptr,
 		nullptr,
-		hInstance,
+		mHInstance,
 		this);
 
-	return hWnd != nullptr;
+	return mHWnd != nullptr;
 }
 
 void DisplayWin32::Show()
 {
-	ShowWindow(hWnd, SW_SHOW);
-	SetForegroundWindow(hWnd);
-	SetFocus(hWnd);
+	ShowWindow(mHWnd, SW_SHOW);
+	SetForegroundWindow(mHWnd);
+	SetFocus(mHWnd);
 }
 
 LRESULT CALLBACK DisplayWin32::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -114,7 +117,7 @@ LRESULT DisplayWin32::MessageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
 		{
 			RAWINPUT* raw = reinterpret_cast<RAWINPUT*>(buffer);
 
-			auto* input = game->GetInput();
+			auto* input = mGameApp->GetInput();
 
 			if (raw->header.dwType == RIM_TYPEKEYBOARD)
 			{

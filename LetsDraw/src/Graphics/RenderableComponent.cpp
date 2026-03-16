@@ -1,57 +1,27 @@
 #pragma comment(lib, "d3dcompiler.lib")
 
-#include "Game\Game.h"
-#include "Game\TransformComponent.h"
+#include "Engine\GameApp.h"
 #include "RenderableComponent.h"
 
 #include <d3dcompiler.h>
 #include <iostream>
 
-RenderableComponent::RenderableComponent(Game* game,
-	std::vector<Vertex> pts,
-	std::vector<uint32_t> idx)
-	: RenderableComponent(game,
-		std::make_unique<TransformComponent>(),
-		std::move(pts),
-		std::move(idx))
-{
-}
-
-RenderableComponent::RenderableComponent(Game* game,
-	std::unique_ptr<TransformComponent> t,
-	std::vector<Vertex> pts,
-	std::vector<uint32_t> idx)
-	: GameComponent(game),
-	transform(std::move(t)),
-	points(std::move(pts)),
-	indices(std::move(idx)),
-	indexCount(static_cast<UINT>(indices.size()))
-{
-}
-
-RenderableComponent::RenderableComponent(const RenderableComponent& other)
-	: GameComponent(other.game),
-	transform(std::make_unique<TransformComponent>(*other.transform)),
-	points(other.points),
-	indices(other.indices),
-	indexCount(other.indexCount)
-{
-}
-
-RenderableComponent::RenderableComponent(RenderableComponent&& other) noexcept
-	: GameComponent(other.game),
-	transform(std::move(other.transform)),
-	points(std::move(other.points)),
-	indices(std::move(other.indices)),
-	indexCount(other.indexCount)
+RenderableComponent::RenderableComponent(
+	GameApp* gameApp,
+	std::vector<Vertex> points,
+	std::vector<uint32_t> indices)
+	: GameComponent(gameApp),
+	mPoints(std::move(points)),
+	mIndices(std::move(indices)),
+	mDevice(mGameApp->GetDevice()),
+	mContext(mGameApp->GetContext()),
+	mTransform(std::make_unique<TransformComponent>()),
+	mIndexCount(static_cast<UINT>(mIndices.size()))
 {
 }
 
 void RenderableComponent::Initialize()
 {
-	device = game->GetDevice();
-	context = game->GetContext();
-
 	CreateConstantBuffer();
 	CreateShaders();
 	CreateGeometry();
@@ -79,7 +49,7 @@ void RenderableComponent::CreateShaders()
 	{
 		if (errorMessage)
 			std::cout << "Error compiling vertex shader: "
-			<< (char*)errorMessage->GetBufferPointer()
+			<< (char*) errorMessage->GetBufferPointer()
 			<< std::endl;
 		return;
 	}
@@ -99,22 +69,22 @@ void RenderableComponent::CreateShaders()
 	{
 		if (errorMessage)
 			std::cout << "Error compiling pixel shader: "
-			<< (char*)errorMessage->GetBufferPointer()
+			<< (char*) errorMessage->GetBufferPointer()
 			<< std::endl;
 		return;
 	}
 
-	device->CreateVertexShader(
+	mDevice->CreateVertexShader(
 		vertexCodeBuffer->GetBufferPointer(),
 		vertexCodeBuffer->GetBufferSize(),
 		nullptr,
-		&vertexShader);
+		&mVertexShader);
 
-	device->CreatePixelShader(
+	mDevice->CreatePixelShader(
 		pixelCodeBuffer->GetBufferPointer(),
 		pixelCodeBuffer->GetBufferSize(),
 		nullptr,
-		&pixelShader);
+		&mPixelShader);
 
 	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
 	{
@@ -126,35 +96,35 @@ void RenderableComponent::CreateShaders()
 		  D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
-	device->CreateInputLayout(
+	mDevice->CreateInputLayout(
 		inputDesc,
 		2,
 		vertexCodeBuffer->GetBufferPointer(),
 		vertexCodeBuffer->GetBufferSize(),
-		&layout);
+		&mLayout);
 }
 
 void RenderableComponent::CreateGeometry()
 {
 	D3D11_BUFFER_DESC vertexBufferDesc{};
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(Vertex) * points.size();
+	vertexBufferDesc.ByteWidth = sizeof(Vertex) * mPoints.size();
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 	D3D11_SUBRESOURCE_DATA vertexBufferData{};
-	vertexBufferData.pSysMem = points.data();
+	vertexBufferData.pSysMem = mPoints.data();
 
-	device->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &vertexBuffer);
+	mDevice->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &mVertexBuffer);
 
 	D3D11_BUFFER_DESC indexBufferDesc{};
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(uint32_t) * indices.size();
+	indexBufferDesc.ByteWidth = sizeof(uint32_t) * mIndices.size();
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
 	D3D11_SUBRESOURCE_DATA indexBufferData{};
-	indexBufferData.pSysMem = indices.data();
+	indexBufferData.pSysMem = mIndices.data();
 
-	device->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);
+	mDevice->CreateBuffer(&indexBufferDesc, &indexBufferData, &mIndexBuffer);
 }
 
 void RenderableComponent::CreateConstantBuffer()
@@ -165,7 +135,7 @@ void RenderableComponent::CreateConstantBuffer()
 	constantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	constantBufferDesc.CPUAccessFlags = 0;
 
-	device->CreateBuffer(&constantBufferDesc, nullptr, &constantBuffer);
+	mDevice->CreateBuffer(&constantBufferDesc, nullptr, &mConstantBuffer);
 }
 
 void RenderableComponent::CreateRasterizerState()
@@ -174,26 +144,26 @@ void RenderableComponent::CreateRasterizerState()
 	rastDesc.CullMode = D3D11_CULL_NONE;
 	rastDesc.FillMode = D3D11_FILL_SOLID;
 
-	device->CreateRasterizerState(&rastDesc, &rastState);
+	mDevice->CreateRasterizerState(&rastDesc, &mRastState);
 }
 
 void RenderableComponent::Draw()
 {
 	CBMatrix bufferMatrix{};
-	bufferMatrix.matrix = DirectX::XMMatrixTranspose(transform->GetWorldMatrix());
-	context->UpdateSubresource(constantBuffer.Get(), 0, nullptr, &bufferMatrix, 0, 0);
-	context->VSSetConstantBuffers(0, 1, constantBuffer.GetAddressOf());
+	bufferMatrix.matrix = DirectX::XMMatrixTranspose(mTransform->GetWorldMatrix());
+	mContext->UpdateSubresource(mConstantBuffer.Get(), 0, nullptr, &bufferMatrix, 0, 0);
+	mContext->VSSetConstantBuffers(0, 1, mConstantBuffer.GetAddressOf());
 
-	context->IASetInputLayout(layout.Get());
-	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	mContext->IASetInputLayout(mLayout.Get());
+	mContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	context->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
-	context->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	mContext->IASetVertexBuffers(0, 1, mVertexBuffer.GetAddressOf(), &mStride, &mOffset);
+	mContext->IASetIndexBuffer(mIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
-	context->VSSetShader(vertexShader.Get(), nullptr, 0);
-	context->PSSetShader(pixelShader.Get(), nullptr, 0);
+	mContext->VSSetShader(mVertexShader.Get(), nullptr, 0);
+	mContext->PSSetShader(mPixelShader.Get(), nullptr, 0);
 
-	context->RSSetState(rastState.Get());
+	mContext->RSSetState(mRastState.Get());
 
-	context->DrawIndexed(indexCount, 0, 0);
+	mContext->DrawIndexed(mIndexCount, 0, 0);
 }

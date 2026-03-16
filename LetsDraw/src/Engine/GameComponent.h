@@ -1,16 +1,14 @@
 #pragma once
 
-class Game;
+class GameApp;
 
 class GameComponent
 {
 public:
-    explicit GameComponent(Game* game)
-        : game(game)
+    explicit GameComponent(GameApp* gameApp)
+        : mGameApp(gameApp)
     {
     }
-
-    virtual ~GameComponent() = default;
 
     virtual void Initialize() {}
     virtual void Update(float deltaTime) {}
@@ -18,5 +16,5 @@ public:
     virtual void DestroyResources() {}
 
 protected:
-    Game* game;
+    GameApp* mGameApp;
 };

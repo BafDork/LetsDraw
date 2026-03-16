@@ -20,13 +20,10 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Display\DisplayWin32.cpp">
+    <ClCompile Include="src\Window\DisplayWin32.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Display\InputDevice.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Game\Game.cpp">
+    <ClCompile Include="src\Window\InputDevice.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\RenderableComponent.cpp">
@@ -35,48 +32,57 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Game\TransformComponent.cpp">
+    <ClCompile Include="src\Graphics\TransformComponent.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Game\CollisionComponent.cpp">
+    <ClCompile Include="src\Graphics\CollisionComponent.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Game\RacketComponent.cpp">
+    <ClCompile Include="src\PongGame\RacketComponent.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Game\BallComponent.cpp">
+    <ClCompile Include="src\PongGame\BallComponent.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\GameApp.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PongGame\PongGame.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Display\DisplayWin32.h">
+    <ClInclude Include="src\Window\DisplayWin32.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Display\InputDevice.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Game\Game.h">
+    <ClInclude Include="src\Window\InputDevice.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\RenderableComponent.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Display\Keys.h">
+    <ClInclude Include="src\Window\Keys.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\Vertex.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Game\TransformComponent.h">
+    <ClInclude Include="src\Graphics\TransformComponent.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Game\CollisionComponent.h">
+    <ClInclude Include="src\Graphics\CollisionComponent.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Game\RacketComponent.h">
+    <ClInclude Include="src\PongGame\RacketComponent.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Game\BallComponent.h">
+    <ClInclude Include="src\PongGame\BallComponent.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\GameApp.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PongGame\PongGame.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
