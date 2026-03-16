@@ -134,7 +134,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Display\DisplayWin32.cpp" />
+    <ClCompile Include="src\Game\BallComponent.cpp" />
+    <ClCompile Include="src\Game\CollisionComponent.cpp" />
     <ClCompile Include="src\Game\Game.cpp" />
+    <ClCompile Include="src\Game\RacketComponent.cpp" />
     <ClCompile Include="src\Game\TransformComponent.cpp" />
     <ClCompile Include="src\Display\InputDevice.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -142,10 +145,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Display\Keys.h" />
+    <ClInclude Include="src\Game\BallComponent.h" />
+    <ClInclude Include="src\Game\CollisionComponent.h" />
+    <ClInclude Include="src\Game\RacketComponent.h" />
     <ClInclude Include="src\Game\TransformComponent.h" />
     <ClInclude Include="src\Display\DisplayWin32.h" />
     <ClInclude Include="src\Game\Game.h" />
-    <ClInclude Include="src\Game\GameComponent.h" />
     <ClInclude Include="src\Display\InputDevice.h" />
     <ClInclude Include="src\Graphics\RenderableComponent.h" />
     <ClInclude Include="src\Graphics\Vertex.h" />

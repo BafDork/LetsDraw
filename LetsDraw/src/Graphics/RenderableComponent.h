@@ -2,16 +2,16 @@
 #pragma comment(lib, "d3d11.lib")
 
 #include "Game\GameComponent.h"
+#include "Game\TransformComponent.h"
 #include "Vertex.h"
 
 #include <d3d11.h>
 #include <DirectXMath.h>
+#include <memory>
 #include <vector>
 #include <wrl.h>
 
 using Microsoft::WRL::ComPtr;
-
-class TransformComponent;
 
 class RenderableComponent : public GameComponent
 {
@@ -25,12 +25,23 @@ public:
         std::vector<Vertex> pts,
         std::vector<uint32_t> idx);
 
+    RenderableComponent(const RenderableComponent& other);
+    RenderableComponent(RenderableComponent&& other) noexcept;
+
     ~RenderableComponent() override = default;
 
     void Initialize() override;
     void Draw() override;
 
-    static std::unique_ptr<RenderableComponent> CreateQuadComponent(Game* game);
+    TransformComponent* GetTransform() const
+    {
+        return transform.get();
+    }
+
+    void SetTransform(std::unique_ptr<TransformComponent> t)
+    {
+        transform = std::move(t);
+    }
 
 protected:
     virtual void CreateShaders();
@@ -38,11 +49,12 @@ protected:
     virtual void CreateRasterizerState();
 	virtual void CreateConstantBuffer();
 
-    std::unique_ptr<TransformComponent> transform;
 
 private:
     std::vector<Vertex> points;
     std::vector<uint32_t> indices;
+
+    std::unique_ptr<TransformComponent> transform;
 
     ID3D11Device* device = nullptr;
     ID3D11DeviceContext* context = nullptr;

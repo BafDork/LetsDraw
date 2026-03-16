@@ -1,8 +1,10 @@
-#include "Display\DisplayWin32.h"
-#include "Display\InputDevice.h"
+#include <iostream>
+
 #include "Display\Keys.h"
 #include "Game.h"
 #include "GameComponent.h"
+#include "RacketComponent.h"
+#include "TransformComponent.h"
 
 Game::Game(int width, int height)
     : clientWidth(width),
@@ -27,6 +29,8 @@ bool Game::Initialize()
 
     if (!InitializeD3D())
         return false;
+
+    CreateGameComponents();
 
     for (auto& c : components)
         c->Initialize();
@@ -87,6 +91,45 @@ void Game::CreateBackBuffer()
         &backBuffer);
 }
 
+void Game::CreateGameComponents()
+{
+    float wallThickness = 0.01f;
+    float halfWidth = 1.0f;
+    float halfHeight = 1.0f;
+
+    topWall = BoundingBox(
+        { 0.f, halfHeight, 0.f },
+        { halfWidth, wallThickness, 0.f }
+    );
+
+    bottomWall = BoundingBox(
+        { 0.f, -halfHeight, 0.f },
+        { halfWidth, wallThickness, 0.f }
+    );
+
+    leftWall = BoundingBox(
+        { -halfWidth, 0.f, 0.f },
+        { wallThickness, halfHeight, 0.f }
+    );
+
+    rightWall = BoundingBox(
+        { halfWidth, 0.f, 0.f },
+        { wallThickness, halfHeight, 0.f }
+    );
+
+    leftRacket = std::make_unique<RacketComponent>(this, 0.1f, 0.4f);
+	leftRacket->GetTransform()->SetPosition({ -0.9f, 0.0f, 0.0f });
+    AddComponent(leftRacket.get());
+
+    rightRacket = std::make_unique<RacketComponent>(this, 0.1f, 0.4f);
+    rightRacket->GetTransform()->SetPosition({ 0.8f, 0.0f, 0.0f });
+    AddComponent(rightRacket.get());
+
+    ball = std::make_unique<BallComponent>(this, 0.05f);
+    ball->GetTransform()->SetPosition({ 0.0f, 0.0f, 0.0f });
+    AddComponent(ball.get());
+}
+
 void Game::Run()
 {
     MSG msg{};
@@ -104,6 +147,67 @@ void Game::Run()
 
         if (input->IsKeyDown(static_cast<int>(Keys::Escape))) {
             Exit();
+        }
+
+        if (ball->GetCollision()->Intersects(topWall) || ball->GetCollision()->Intersects(bottomWall))
+        {
+            DirectX::XMFLOAT3 v = ball->GetVelocity();
+            v.y = -v.y;
+            ball->SetVelocity(v);
+        }
+
+        if (ball->GetCollision()->Intersects(leftRacket->GetCollision()->GetWorldBounds()))
+        {
+            DirectX::XMFLOAT3 v = ball->GetVelocity();
+            v.x = fabs(v.x) * ballSpeedMultiplier;
+            v.y *= ballSpeedMultiplier;
+            ball->SetVelocity(v);
+        }
+        if (ball->GetCollision()->Intersects(rightRacket->GetCollision()->GetWorldBounds()))
+        {
+            DirectX::XMFLOAT3 v = ball->GetVelocity();
+            v.x = -fabs(v.x) * ballSpeedMultiplier;
+            v.y *= ballSpeedMultiplier;
+            ball->SetVelocity(v);
+        }
+
+        if (ball->GetCollision()->Intersects(leftWall))
+        {
+            rightScore++;
+            std::cout << "Score: Left " << leftScore << " - Right " << rightScore << std::endl;
+
+            ball->GetTransform()->SetPosition({ 0.0f, 0.0f, 0.0f });
+            ball->SetVelocity({ 0.5f, 0.3f, 0.0f });
+        }
+        if (ball->GetCollision()->Intersects(rightWall))
+        {
+            leftScore++;
+            std::cout << "Score: Left " << leftScore << " - Right " << rightScore << std::endl;
+
+            ball->GetTransform()->SetPosition({ 0.0f, 0.0f, 0.0f });
+            ball->SetVelocity({ -0.5f, -0.3f, 0.0f });
+        }
+
+        if (input->IsKeyDown(static_cast<int>(Keys::W)) &&
+            !leftRacket->GetCollision()->Intersects(topWall))
+        {
+            leftRacket->GetTransform()->Translate({ 0.0f, 0.01f, 0.0f });
+        }
+        if (input->IsKeyDown(static_cast<int>(Keys::S)) &&
+            !leftRacket->GetCollision()->Intersects(bottomWall))
+        {
+            leftRacket->GetTransform()->Translate({ 0.0f, -0.01f, 0.0f });
+        }
+
+        if (input->IsKeyDown(static_cast<int>(Keys::Up)) &&
+            !rightRacket->GetCollision()->Intersects(topWall))
+        {
+            rightRacket->GetTransform()->Translate({ 0.0f, 0.01f, 0.0f });
+        }
+        if (input->IsKeyDown(static_cast<int>(Keys::Down)) &&
+            !rightRacket->GetCollision()->Intersects(bottomWall))
+        {
+            rightRacket->GetTransform()->Translate({ 0.0f, -0.01f, 0.0f });
         }
 
         auto curTime = std::chrono::steady_clock::now();
@@ -160,9 +264,9 @@ void Game::Draw()
         c->Draw();
 }
 
-void Game::AddComponent(std::unique_ptr<GameComponent> component)
+void Game::AddComponent(GameComponent* component)
 {
-    components.push_back(std::move(component));
+    components.push_back(component);
 }
 
 void Game::EndFrame()

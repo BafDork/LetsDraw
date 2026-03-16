@@ -29,6 +29,24 @@ RenderableComponent::RenderableComponent(Game* game,
 {
 }
 
+RenderableComponent::RenderableComponent(const RenderableComponent& other)
+	: GameComponent(other.game),
+	transform(std::make_unique<TransformComponent>(*other.transform)),
+	points(other.points),
+	indices(other.indices),
+	indexCount(other.indexCount)
+{
+}
+
+RenderableComponent::RenderableComponent(RenderableComponent&& other) noexcept
+	: GameComponent(other.game),
+	transform(std::move(other.transform)),
+	points(std::move(other.points)),
+	indices(std::move(other.indices)),
+	indexCount(other.indexCount)
+{
+}
+
 void RenderableComponent::Initialize()
 {
 	device = game->GetDevice();
@@ -178,23 +196,4 @@ void RenderableComponent::Draw()
 	context->RSSetState(rastState.Get());
 
 	context->DrawIndexed(indexCount, 0, 0);
-}
-
-std::unique_ptr<RenderableComponent> RenderableComponent::CreateQuadComponent(Game* game)
-{
-	std::vector<Vertex> quadVertices =
-	{
-		{{ 0.5f,  0.5f, 0.0f, 1.0f }, {1,1,1,1}},
-		{{-0.5f,  0.5f, 0.0f, 1.0f }, {1,1,1,1}},
-		{{-0.5f, -0.5f, 0.0f, 1.0f }, {1,1,1,1}},
-		{{ 0.5f, -0.5f, 0.0f, 1.0f }, {1,1,1,1}}
-	};
-
-	std::vector<uint32_t> quadIndices = { 0,1,2, 0,2,3 };
-
-	return std::make_unique<RenderableComponent>(
-		game,
-		std::move(quadVertices),
-		std::move(quadIndices)
-	);
 }
