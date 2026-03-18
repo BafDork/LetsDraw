@@ -1,9 +1,11 @@
 #pragma once
 
-#include <DirectXMath.h>
+#include <SimpleMath.h>
+
+using DirectX::SimpleMath::Vector4;
 
 struct Vertex
 {
-    DirectX::XMFLOAT4 position;
-    DirectX::XMFLOAT4 color;
+    Vector4 position;
+    Vector4 color;
 };

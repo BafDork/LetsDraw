@@ -2,6 +2,7 @@
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
 
+#include "GameComponent.h"
 #include "Window\DisplayWin32.h"
 #include "Window\InputDevice.h"
 
@@ -13,6 +14,7 @@
 using Microsoft::WRL::ComPtr;
 
 class GameComponent;
+class CameraComponent;
 
 class GameApp
 {
@@ -27,6 +29,9 @@ public:
     ID3D11DeviceContext* GetContext() const { return mContext.Get(); }
     DisplayWin32* GetDisplay() const { return mDisplay.get(); }
     InputDevice* GetInput() const { return mInput.get(); }
+	CameraComponent* GetCamera() const { return mCamera; }
+	int GetClientWidth() const { return mClientWidth; }
+	int GetClientHeight() const { return mClientHeight; }
 
 protected:
     virtual void OnCreateGame() {}
@@ -48,9 +53,14 @@ protected:
     ComPtr<IDXGISwapChain> mSwapChain;
     ComPtr<ID3D11RenderTargetView> mBackBuffer;
 
+    CameraComponent* mCamera = nullptr;
+    CameraComponent* mPerspectiveCamera = nullptr;
+    CameraComponent* mOrthoCamera = nullptr;
+
 private:
     bool InitializeD3D();
     void CreateBackBuffer();
+	void CreateCamera();
 
     void Update(float deltaTime);
     void Draw();

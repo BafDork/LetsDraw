@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "GameApp.h"
-#include "GameComponent.h"
+#include "Graphics\CameraComponent.h"
 #include "Window\Keys.h"
 
 GameApp::GameApp(int width, int height) : 
@@ -26,6 +26,7 @@ bool GameApp::Initialize()
     if (!InitializeD3D())
         return false;
 
+    CreateCamera();
     OnCreateGame();
 
     for (auto& component : mComponents)
@@ -93,6 +94,28 @@ void GameApp::CreateBackBuffer()
         &mBackBuffer);
 }
 
+void GameApp::CreateCamera()
+{
+    float aspect = (float)mClientWidth / (float)mClientHeight;
+
+    auto perspectiveCam = std::make_unique<CameraComponent>(this, CameraProjection::Perspective);
+    perspectiveCam->SetPosition({ 0, 0, -10 });
+    perspectiveCam->SetTarget({ 1,0,0 });
+    perspectiveCam->SetAspect(aspect);
+    mPerspectiveCamera = perspectiveCam.get();
+    AddComponent(std::move(perspectiveCam));
+
+    auto orthoCam = std::make_unique<CameraComponent>(this, CameraProjection::Orthographic);
+    orthoCam->SetPosition({ 0,0,-5 });
+    orthoCam->SetTarget({ 0,0,0 });
+    orthoCam->SetOrthographic(2.0f, 2.0f, 0.1f, 100.f);
+    orthoCam->SetAspect(aspect);
+    mOrthoCamera = orthoCam.get();
+    AddComponent(std::move(orthoCam));
+
+    mCamera = mOrthoCamera;
+}
+
 void GameApp::Run()
 {
     MSG msg{};
@@ -108,8 +131,16 @@ void GameApp::Run()
                 mExitRequested = true;
         }
 
-        if (mInput->IsKeyDown(static_cast<int>(Keys::Escape))) {
+        if (mInput->IsKeyDown(static_cast<int>(Keys::Escape))) 
+        {
             Exit();
+        }
+        if (mInput->IsKeyPressed(static_cast<int>(Keys::C)))
+        {
+            if (mCamera == mOrthoCamera)
+                mCamera = mPerspectiveCamera;
+            else
+                mCamera = mOrthoCamera;
         }
 
         auto curTime = std::chrono::steady_clock::now();

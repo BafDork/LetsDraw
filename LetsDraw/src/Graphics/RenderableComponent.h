@@ -6,14 +6,16 @@
 #include "Vertex.h"
 
 #include <d3d11.h>
-#include <DirectXMath.h>
 #include <memory>
+#include <SimpleMath.h>
 #include <vector>
 #include <wrl.h>
 
 using Microsoft::WRL::ComPtr;
+using DirectX::SimpleMath::Matrix;
 
 class GameApp;
+class CameraComponent;
 
 class RenderableComponent : public GameComponent
 {
@@ -60,6 +62,6 @@ private:
 
     struct CBMatrix
     {
-        DirectX::XMMATRIX matrix;
+        Matrix matrix;
     };
 };

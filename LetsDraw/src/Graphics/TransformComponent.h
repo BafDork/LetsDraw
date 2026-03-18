@@ -1,31 +1,31 @@
 #pragma once
 
-#include <DirectXMath.h>
+#include <SimpleMath.h>
 
-using DirectX::XMFLOAT3;
-using DirectX::XMMATRIX;
+using DirectX::SimpleMath::Vector3;
+using DirectX::SimpleMath::Matrix;
 
 class TransformComponent
 {
 public:
     TransformComponent() = default;
 
-    void SetPosition(const XMFLOAT3& position);
-    void Translate(const XMFLOAT3& delta);
+    void SetPosition(const Vector3& position);
+    void Translate(const Vector3& delta);
 
-    void SetScale(const XMFLOAT3& scale);
+    void SetScale(const Vector3& scale);
 
-    void SetRotation(const XMFLOAT3& rotation);
-    void Rotate(const XMFLOAT3& delta);
+    void SetRotation(const Vector3& rotation);
+    void Rotate(const Vector3& delta);
 
-    XMMATRIX GetWorldMatrix() const;
+    Matrix GetWorldMatrix() const;
 
-    XMFLOAT3 GetPosition() const { return mPosition; }
-    XMFLOAT3 GetRotation() const { return mRotation; }
-    XMFLOAT3 GetScale() const { return mScale; }
+    Vector3 GetPosition() const { return mPosition; }
+    Vector3 GetRotation() const { return mRotation; }
+    Vector3 GetScale() const { return mScale; }
 
 private:
-    XMFLOAT3 mPosition{ 0.0f, 0.0f, 0.0f };
-    XMFLOAT3 mRotation{ 0.0f, 0.0f, 0.0f };
-    XMFLOAT3 mScale{ 1.0f, 1.0f, 1.0f };
+    Vector3 mPosition{ 0.0f, 0.0f, 0.0f };
+    Vector3 mRotation{ 0.0f, 0.0f, 0.0f };
+    Vector3 mScale{ 1.0f, 1.0f, 1.0f };
 };

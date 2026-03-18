@@ -1,5 +1,6 @@
 #pragma comment(lib, "d3dcompiler.lib")
 
+#include "CameraComponent.h"
 #include "Engine\GameApp.h"
 #include "RenderableComponent.h"
 
@@ -150,7 +151,12 @@ void RenderableComponent::CreateRasterizerState()
 void RenderableComponent::Draw()
 {
 	CBMatrix bufferMatrix{};
-	bufferMatrix.matrix = DirectX::XMMatrixTranspose(mTransform->GetWorldMatrix());
+	CameraComponent* camera = mGameApp->GetCamera();
+
+	Matrix worldMatrix = mTransform->GetWorldMatrix();
+	Matrix worldViewProjection = worldMatrix * camera->GetView() * camera->GetProjection();
+	bufferMatrix.matrix = DirectX::XMMatrixTranspose(worldViewProjection);
+
 	mContext->UpdateSubresource(mConstantBuffer.Get(), 0, nullptr, &bufferMatrix, 0, 0);
 	mContext->VSSetConstantBuffers(0, 1, mConstantBuffer.GetAddressOf());
 
