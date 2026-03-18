@@ -20,10 +20,7 @@ class CameraComponent;
 class RenderableComponent : public GameComponent
 {
 public:
-    RenderableComponent(
-        GameApp* gameApp,
-        std::vector<Vertex> points,
-        std::vector<uint32_t> indices);
+    RenderableComponent(GameApp* gameApp);
 
     void Initialize() override;
     void Draw() override;
@@ -36,6 +33,8 @@ protected:
     virtual void CreateGeometry();
     virtual void CreateRasterizerState();
 	virtual void CreateConstantBuffer();
+
+    virtual void GetMesh(std::vector<Vertex>& outVertices, std::vector<uint32_t>& outIndices) {}
 
 private:
     std::vector<Vertex> mPoints;

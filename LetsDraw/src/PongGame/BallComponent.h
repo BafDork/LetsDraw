@@ -3,9 +3,9 @@
 #include "Graphics\CollisionComponent.h"
 #include "Graphics\RenderableComponent.h"
 
-#include <DirectXMath.h>
+#include <SimpleMath.h>
 
-using DirectX::XMFLOAT3;
+using DirectX::SimpleMath::Vector3;
 
 class GameApp;
 
@@ -16,11 +16,16 @@ public:
 
     void Update(float deltaTime) override;
 
-    XMFLOAT3 GetVelocity() const { return mVelocity; }
-    void SetVelocity(const XMFLOAT3& vel) { mVelocity = vel; }
+    Vector3 GetVelocity() const { return mVelocity; }
+    void SetVelocity(const Vector3& vel) { mVelocity = vel; }
     CollisionComponent* GetCollision() const { return mCollision.get(); }
 
+protected:
+    void GetMesh(std::vector<Vertex>& outVertices, std::vector<uint32_t>& outIndices) override;
+
 private:
-    XMFLOAT3 mVelocity;
+    Vector3 mVelocity{ 0.0f, 0.0f, 0.0f };
     std::unique_ptr<CollisionComponent> mCollision;
+
+    float mSize;
 };

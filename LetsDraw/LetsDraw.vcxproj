@@ -134,6 +134,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Graphics\CameraComponent.cpp" />
+    <ClCompile Include="src\Graphics\SphericalComponent.cpp" />
+    <ClCompile Include="src\Graphics\SphericalComponent.h" />
+    <ClCompile Include="src\Planetarium\CelestialBodyComponent.cpp" />
     <ClCompile Include="src\Planetarium\PlanetariumGame.cpp" />
     <ClCompile Include="src\Planetarium\PlanetariumGame.h" />
     <ClCompile Include="src\PongGame\PongGame.cpp" />
@@ -149,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Graphics\CameraComponent.h" />
+    <ClInclude Include="src\Planetarium\CelestialBodyComponent.h" />
     <ClInclude Include="src\PongGame\PongGame.h" />
     <ClInclude Include="src\Window\Keys.h" />
     <ClInclude Include="src\Engine\GameApp.h" />

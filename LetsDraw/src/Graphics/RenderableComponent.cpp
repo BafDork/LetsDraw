@@ -7,17 +7,11 @@
 #include <d3dcompiler.h>
 #include <iostream>
 
-RenderableComponent::RenderableComponent(
-	GameApp* gameApp,
-	std::vector<Vertex> points,
-	std::vector<uint32_t> indices)
-	: GameComponent(gameApp),
-	mPoints(std::move(points)),
-	mIndices(std::move(indices)),
+RenderableComponent::RenderableComponent(GameApp* gameApp) :
+	GameComponent(gameApp),
 	mDevice(mGameApp->GetDevice()),
 	mContext(mGameApp->GetContext()),
-	mTransform(std::make_unique<TransformComponent>()),
-	mIndexCount(static_cast<UINT>(mIndices.size()))
+	mTransform(std::make_unique<TransformComponent>())
 {
 }
 
@@ -107,6 +101,9 @@ void RenderableComponent::CreateShaders()
 
 void RenderableComponent::CreateGeometry()
 {
+	GetMesh(mPoints, mIndices);
+
+	mIndexCount = static_cast<UINT>(mIndices.size());
 	D3D11_BUFFER_DESC vertexBufferDesc{};
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDesc.ByteWidth = sizeof(Vertex) * mPoints.size();

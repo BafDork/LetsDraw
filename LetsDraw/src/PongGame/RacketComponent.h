@@ -13,6 +13,12 @@ public:
     CollisionComponent* GetCollision() const { return mCollision.get(); }
     void SetCollision(std::unique_ptr<CollisionComponent> collision) { mCollision = std::move(collision); }
 
+protected:
+	void GetMesh(std::vector<Vertex>& outVertices, std::vector<uint32_t>& outIndices) override;
+
 private:
     std::unique_ptr<CollisionComponent> mCollision;
+
+	float mWidth;
+	float mHeight;
 };
