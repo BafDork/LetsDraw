@@ -1,6 +1,6 @@
 #pragma comment(lib, "d3dcompiler.lib")
 
-#include "CameraComponent.h"
+#include "Engine\Camera\CameraBase.h"
 #include "Engine\GameApp.h"
 #include "RenderableComponent.h"
 
@@ -148,7 +148,7 @@ void RenderableComponent::CreateRasterizerState()
 void RenderableComponent::Draw()
 {
 	CBMatrix bufferMatrix{};
-	CameraComponent* camera = mGameApp->GetCamera();
+	CameraBase* camera = mGameApp->GetCamera();
 
 	Matrix worldMatrix = mTransform->GetWorldMatrix();
 	Matrix worldViewProjection = worldMatrix * camera->GetView() * camera->GetProjection();

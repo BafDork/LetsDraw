@@ -1,7 +1,8 @@
 #include "CelestialMotionComponent.h"
+#include "Engine/Camera/FpsCamera.h"
+#include "Engine/Camera/PerspectiveCameraBase.h"
 #include "Graphics/BoxComponent.h"
 #include "Graphics/SphericalComponent.h"
-#include "Graphics\CameraComponent.h"
 #include "PlanetariumGame.h"
 #include "Window\Keys.h"
 
@@ -91,29 +92,58 @@ void PlanetariumGame::OnCreateGame()
     boxPlanet->SetColor({ 0.2f, 1.0f, 0.2f, 1.0f });
 
     auto boxMotion = std::make_unique<CelestialMotionComponent>(
-        this, boxPlanet->GetTransform(), sunTransform, 22.0f, 0.05f, 0.3f);
+        this, boxPlanet->GetTransform(), sunTransform, 12.0f, 0.05f, 0.3f);
     AddComponent(std::move(boxPlanet));
     AddComponent(std::move(boxMotion));
+
+    auto cameraMotion = std::make_unique<CelestialMotionComponent>(
+        this, mOrbitCamera->GetTransform(), sunTransform, 15.0f, 0.1f, 0.f);
+    AddComponent(std::move(cameraMotion));
+}
+
+void PlanetariumGame::CreateCamera()
+{
+    float aspect = static_cast<float>(mClientWidth) / mClientHeight;
+
+    auto fpsCam = std::make_unique<FpsCamera>(this);
+    fpsCam->GetTransform()->SetPosition({ 0, 0, 0 });
+    fpsCam->SetAspect(aspect);
+    mFpsCamera = fpsCam.get();
+    AddComponent(std::move(fpsCam));
+
+    auto orbitCamera = std::make_unique<FpsCamera>(this);
+    orbitCamera->SetAspect(aspect);
+	mOrbitCamera = orbitCamera.get();
+    AddComponent(std::move(orbitCamera));
+
+    mCamera = mOrbitCamera;
 }
 
 void PlanetariumGame::OnUpdate(float delta)
 {
     auto input = GetInput();
+    auto transform = mCamera->GetTransform();
+
+    Vector3 forward = mCamera->GetForward();
+    Vector3 right = mCamera->GetRight();
 
     if (input->IsKeyDown(static_cast<int>(Keys::W)))
-    {
-        mCamera->Move(mCamera->GetForward() * moveSpeed * delta);
-    }
+        transform->Translate(forward * moveSpeed * delta);
+
     if (input->IsKeyDown(static_cast<int>(Keys::S)))
-    {
-        mCamera->Move(mCamera->GetForward() * moveSpeed * delta * -1);
-    }
+        transform->Translate(forward * moveSpeed * delta * -1);
+
     if (input->IsKeyDown(static_cast<int>(Keys::D)))
-    {
-        mCamera->Move(mCamera->GetRight() * moveSpeed * delta);
-    }
+        transform->Translate(right * moveSpeed * delta);
+
     if (input->IsKeyDown(static_cast<int>(Keys::A)))
+        transform->Translate(right * moveSpeed * delta * -1);
+
+    if (mInput->IsKeyPressed(static_cast<int>(Keys::C)))
     {
-        mCamera->Move(mCamera->GetRight() * moveSpeed * delta * -1);
+        if (mCamera == mOrbitCamera)
+            mCamera = mFpsCamera;
+        else
+            mCamera = mOrbitCamera;
     }
 }

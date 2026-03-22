@@ -133,8 +133,10 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Engine\Camera\FpsCamera.cpp" />
+    <ClCompile Include="src\Engine\Camera\OrthographicCameraBase.cpp" />
+    <ClCompile Include="src\Engine\Camera\PerspectiveCameraBase.cpp" />
     <ClCompile Include="src\Graphics\BoxComponent.cpp" />
-    <ClCompile Include="src\Graphics\CameraComponent.cpp" />
     <ClCompile Include="src\Graphics\SphericalComponent.cpp" />
     <ClCompile Include="src\Graphics\SphericalComponent.h" />
     <ClCompile Include="src\Planetarium\CelestialMotionComponent.cpp" />
@@ -152,8 +154,11 @@
     <ClCompile Include="src\Graphics\RenderableComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Engine\Camera\CameraBase.h" />
+    <ClInclude Include="src\Engine\Camera\FpsCamera.h" />
+    <ClInclude Include="src\Engine\Camera\OrthographicCameraBase.h" />
+    <ClInclude Include="src\Engine\Camera\PerspectiveCameraBase.h" />
     <ClInclude Include="src\Graphics\BoxComponent.h" />
-    <ClInclude Include="src\Graphics\CameraComponent.h" />
     <ClInclude Include="src\Planetarium\CelestialMotionComponent.h" />
     <ClInclude Include="src\PongGame\PongGame.h" />
     <ClInclude Include="src\Window\Keys.h" />

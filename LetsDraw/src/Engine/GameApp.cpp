@@ -1,7 +1,8 @@
 #include <iostream>
 
+#include "Engine\Camera\OrthographicCameraBase.h"
+#include "Graphics\TransformComponent.h"
 #include "GameApp.h"
-#include "Graphics\CameraComponent.h"
 #include "Window\Keys.h"
 
 GameApp::GameApp(int width, int height) : 
@@ -96,24 +97,12 @@ void GameApp::CreateBackBuffer()
 
 void GameApp::CreateCamera()
 {
-    float aspect = (float)mClientWidth / (float)mClientHeight;
+    auto orthoCamera = std::make_unique<OrthographicCameraBase>(
+        this, static_cast<float>(mClientWidth), static_cast<float>(mClientHeight));
+    orthoCamera->GetTransform()->SetPosition({ 0, 0, -10 });
+    mCamera = orthoCamera.get();
 
-    auto perspectiveCam = std::make_unique<CameraComponent>(this, CameraProjection::Perspective);
-    perspectiveCam->SetPosition({ 0, 0, -10 });
-    perspectiveCam->SetTarget({ 1,0,0 });
-    perspectiveCam->SetAspect(aspect);
-    mPerspectiveCamera = perspectiveCam.get();
-    AddComponent(std::move(perspectiveCam));
-
-    auto orthoCam = std::make_unique<CameraComponent>(this, CameraProjection::Orthographic);
-    orthoCam->SetPosition({ 0,0,-5 });
-    orthoCam->SetTarget({ 0,0,0 });
-    orthoCam->SetOrthographic(2.0f, 2.0f, 0.1f, 100.f);
-    orthoCam->SetAspect(aspect);
-    mOrthoCamera = orthoCam.get();
-    AddComponent(std::move(orthoCam));
-
-    mCamera = mOrthoCamera;
+    AddComponent(std::move(orthoCamera));
 }
 
 void GameApp::Run()
@@ -134,13 +123,6 @@ void GameApp::Run()
         if (mInput->IsKeyDown(static_cast<int>(Keys::Escape))) 
         {
             Exit();
-        }
-        if (mInput->IsKeyPressed(static_cast<int>(Keys::C)))
-        {
-            if (mCamera == mOrthoCamera)
-                mCamera = mPerspectiveCamera;
-            else
-                mCamera = mOrthoCamera;
         }
 
         auto curTime = std::chrono::steady_clock::now();

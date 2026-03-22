@@ -14,7 +14,7 @@
 using Microsoft::WRL::ComPtr;
 
 class GameComponent;
-class CameraComponent;
+class CameraBase;
 
 class GameApp
 {
@@ -29,11 +29,12 @@ public:
     ID3D11DeviceContext* GetContext() const { return mContext.Get(); }
     DisplayWin32* GetDisplay() const { return mDisplay.get(); }
     InputDevice* GetInput() const { return mInput.get(); }
-	CameraComponent* GetCamera() const { return mCamera; }
+    CameraBase* GetCamera() const { return mCamera; }
 	int GetClientWidth() const { return mClientWidth; }
 	int GetClientHeight() const { return mClientHeight; }
 
 protected:
+    virtual void CreateCamera();
     virtual void OnCreateGame() {}
     virtual void OnUpdate(float deltaTime) {}
 
@@ -53,14 +54,11 @@ protected:
     ComPtr<IDXGISwapChain> mSwapChain;
     ComPtr<ID3D11RenderTargetView> mBackBuffer;
 
-    CameraComponent* mCamera = nullptr;
-    CameraComponent* mPerspectiveCamera = nullptr;
-    CameraComponent* mOrthoCamera = nullptr;
+    CameraBase* mCamera = nullptr;
 
 private:
     bool InitializeD3D();
     void CreateBackBuffer();
-	void CreateCamera();
 
     void Update(float deltaTime);
     void Draw();
