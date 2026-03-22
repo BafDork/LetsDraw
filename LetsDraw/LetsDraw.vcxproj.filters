@@ -65,7 +65,10 @@
     <ClCompile Include="src\Graphics\SphericalComponent.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Planetarium\CelestialBodyComponent.cpp">
+    <ClCompile Include="src\Planetarium\CelestialMotionComponent.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\BoxComponent.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -106,7 +109,10 @@
     <ClInclude Include="src\Graphics\CameraComponent.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Planetarium\CelestialBodyComponent.h">
+    <ClInclude Include="src\Planetarium\CelestialMotionComponent.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\BoxComponent.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

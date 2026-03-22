@@ -1,4 +1,6 @@
-#include "CelestialBodyComponent.h"
+#include "CelestialMotionComponent.h"
+#include "Graphics/BoxComponent.h"
+#include "Graphics/SphericalComponent.h"
 #include "Graphics\CameraComponent.h"
 #include "PlanetariumGame.h"
 #include "Window\Keys.h"
@@ -10,57 +12,88 @@ PlanetariumGame::PlanetariumGame(int width, int height)
 
 void PlanetariumGame::OnCreateGame()
 {
-    auto sun = std::make_unique<CelestialBodyComponent>(this, 1.5f, nullptr, 0.f, 0.f);
-    sun->GetTransform()->SetPosition({ 0.0f, 0.0f, 0.0f });
-    sun->SetColor({ 1.0f, 1.0f, 0.0f, 1.0f });
-    CelestialBodyComponent* pSun = sun.get();
-    AddComponent(std::move(sun));
+    auto sunMesh = std::make_unique<SphericalComponent>(this, 1.5f);
+    sunMesh->SetColor({ 1.0f, 1.0f, 0.0f, 1.0f });
+    TransformComponent* sunTransform = sunMesh->GetTransform();
 
-    auto mercury = std::make_unique<CelestialBodyComponent>(this, 0.2f, pSun, 2.0f, 1.2f);
-    mercury->SetColor({ 0.6f, 0.6f, 0.6f, 1.0f });
-    AddComponent(std::move(mercury));
+    auto sunMotion = std::make_unique<CelestialMotionComponent>(
+        this, sunTransform, nullptr, 0.f, 0.f, 0.2f);
+    AddComponent(std::move(sunMesh));
+    AddComponent(std::move(sunMotion));
 
-    auto venus = std::make_unique<CelestialBodyComponent>(this, 0.3f, pSun, 3.5f, 0.8f);
-    venus->SetColor({ 1.0f, 0.8f, 0.0f, 1.0f });
-    AddComponent(std::move(venus));
+    auto mercuryMesh = std::make_unique<SphericalComponent>(this, 0.2f);
+    mercuryMesh->SetColor({ 0.6f, 0.6f, 0.6f, 1.0f });
 
-    auto earth = std::make_unique<CelestialBodyComponent>(this, 0.5f, pSun, 5.0f, 0.5f);
-    earth->SetColor({ 0.0f, 0.1f, 0.9f, 1.0f });
-    CelestialBodyComponent* pEarth = earth.get();
-    AddComponent(std::move(earth));
+    auto mercuryMotion = std::make_unique<CelestialMotionComponent>(
+        this, mercuryMesh->GetTransform(), sunTransform, 2.0f, 1.2f, 0.5f);
+    AddComponent(std::move(mercuryMesh));
+    AddComponent(std::move(mercuryMotion));
 
-    auto moon = std::make_unique<CelestialBodyComponent>(this, 0.2f, pEarth, 1.5f, 2.0f);
-    moon->SetColor({ 0.6f, 0.6f, 0.6f, 1.0f });
-    AddComponent(std::move(moon));
+    auto venusMesh = std::make_unique<BoxComponent>(this, 0.3f, 0.3f, 0.3f);
+    venusMesh->SetColor({ 1.0f, 0.8f, 0.0f, 1.0f });
 
-    auto mars = std::make_unique<CelestialBodyComponent>(this, 0.3f, pSun, 8.0f, 0.3f);
-    mars->SetColor({ 0.9f, 0.3f, 0.1f, 1.0f });
-    CelestialBodyComponent* pMars = mars.get();
-    AddComponent(std::move(mars));
+    auto venusMotion = std::make_unique<CelestialMotionComponent>(
+        this, venusMesh->GetTransform(), sunTransform, 3.5f, 0.8f, 0.4f);
+    AddComponent(std::move(venusMesh));
+    AddComponent(std::move(venusMotion));
 
-    auto phobos = std::make_unique<CelestialBodyComponent>(this, 0.1f, pMars, 0.6f, 1.5f);
-    phobos->SetColor({ 0.7f, 0.7f, 0.7f, 1.0f });
-    AddComponent(std::move(phobos));
+    auto earthMesh = std::make_unique<SphericalComponent>(this, 0.5f);
+    earthMesh->SetColor({ 0.0f, 0.1f, 0.9f, 1.0f });
+    TransformComponent* earthTransform = earthMesh->GetTransform();
 
-    auto deimos = std::make_unique<CelestialBodyComponent>(this, 0.08f, pMars, 1.0f, 1.2f);
-    deimos->SetColor({ 0.6f, 0.6f, 0.6f, 1.0f });
-    AddComponent(std::move(deimos));
+    auto earthMotion = std::make_unique<CelestialMotionComponent>(
+        this, earthTransform, sunTransform, 5.0f, 0.5f, 0.5f);
+    AddComponent(std::move(earthMesh));
+    AddComponent(std::move(earthMotion));
 
-    auto jupiter = std::make_unique<CelestialBodyComponent>(this, 1.0f, pSun, 11.0f, 0.2f);
-    jupiter->SetColor({ 0.9f, 0.6f, 0.3f, 1.0f });
-    AddComponent(std::move(jupiter));
+    auto moonMesh = std::make_unique<SphericalComponent>(this, 0.2f);
+    moonMesh->SetColor({ 0.6f, 0.6f, 0.6f, 1.0f });
 
-    auto saturn = std::make_unique<CelestialBodyComponent>(this, 0.9f, pSun, 14.0f, 0.15f);
-    saturn->SetColor({ 0.9f, 0.8f, 0.5f, 1.0f });
-    AddComponent(std::move(saturn));
+    auto moonMotion = std::make_unique<CelestialMotionComponent>(
+        this, moonMesh->GetTransform(), earthTransform, 1.5f, 2.0f, 0.6f);
+    AddComponent(std::move(moonMesh));
+    AddComponent(std::move(moonMotion));
 
-    auto uranus = std::make_unique<CelestialBodyComponent>(this, 0.7f, pSun, 17.0f, 0.1f);
-    uranus->SetColor({ 0.5f, 0.8f, 1.0f, 1.0f });
-    AddComponent(std::move(uranus));
+    auto marsMesh = std::make_unique<BoxComponent>(this, 0.3f, 0.3f, 0.3f);
+    marsMesh->SetColor({ 0.9f, 0.3f, 0.1f, 1.0f });
+    TransformComponent* marsTransform = marsMesh->GetTransform();
 
-    auto neptune = std::make_unique<CelestialBodyComponent>(this, 0.7f, pSun, 20.0f, 0.08f);
-    neptune->SetColor({ 0.3f, 0.3f, 1.0f, 1.0f });
-    AddComponent(std::move(neptune));
+    auto marsMotion = std::make_unique<CelestialMotionComponent>(
+        this, marsTransform, sunTransform, 8.0f, 0.3f, 0.3f);
+    AddComponent(std::move(marsMesh));
+    AddComponent(std::move(marsMotion));
+
+    auto phobosMesh = std::make_unique<SphericalComponent>(this, 0.1f);
+    phobosMesh->SetColor({ 0.7f, 0.7f, 0.7f, 1.0f });
+
+    auto phobosMotion = std::make_unique<CelestialMotionComponent>(
+        this, phobosMesh->GetTransform(), marsTransform, 0.6f, 1.5f, 0.6f);
+    AddComponent(std::move(phobosMesh));
+    AddComponent(std::move(phobosMotion));
+
+    auto deimosMesh = std::make_unique<SphericalComponent>(this, 0.08f);
+    deimosMesh->SetColor({ 0.6f, 0.6f, 0.6f, 1.0f });
+
+    auto deimosMotion = std::make_unique<CelestialMotionComponent>(
+        this, deimosMesh->GetTransform(), marsTransform, 1.0f, 1.2f, 0.5f);
+    AddComponent(std::move(deimosMesh));
+    AddComponent(std::move(deimosMotion));
+
+    auto jupiterMesh = std::make_unique<SphericalComponent>(this, 1.0f);
+    jupiterMesh->SetColor({ 0.9f, 0.6f, 0.3f, 1.0f });
+
+    auto jupiterMotion = std::make_unique<CelestialMotionComponent>(
+        this, jupiterMesh->GetTransform(), sunTransform, 11.0f, 0.2f, 0.2f);
+    AddComponent(std::move(jupiterMesh));
+    AddComponent(std::move(jupiterMotion));
+
+    auto boxPlanet = std::make_unique<BoxComponent>(this, 0.4f, 0.4f, 0.4f);
+    boxPlanet->SetColor({ 0.2f, 1.0f, 0.2f, 1.0f });
+
+    auto boxMotion = std::make_unique<CelestialMotionComponent>(
+        this, boxPlanet->GetTransform(), sunTransform, 22.0f, 0.05f, 0.3f);
+    AddComponent(std::move(boxPlanet));
+    AddComponent(std::move(boxMotion));
 }
 
 void PlanetariumGame::OnUpdate(float delta)
