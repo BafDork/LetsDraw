@@ -54,11 +54,16 @@ protected:
     ComPtr<IDXGISwapChain> mSwapChain;
     ComPtr<ID3D11RenderTargetView> mBackBuffer;
 
+    ComPtr<ID3D11Texture2D> mDepthStencil;
+    ComPtr<ID3D11DepthStencilView> mDepthView;
+    ComPtr<ID3D11DepthStencilState> mDepthState;
+
     CameraBase* mCamera = nullptr;
 
 private:
     bool InitializeD3D();
     void CreateBackBuffer();
+	void CreateDepthStencil();
 
     void Update(float deltaTime);
     void Draw();
