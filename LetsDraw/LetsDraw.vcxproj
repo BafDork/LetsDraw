@@ -105,11 +105,14 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Libraries\Assimp\include;$(ProjectDir)\src;$(ProjectDir)\src</AdditionalIncludeDirectories>
+      <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)\Libraries\Assimp\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(ProjectDir)\Libraries\Assimp\lib\x64\assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -121,10 +124,13 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Libraries\Assimp\include;$(ProjectDir)\src;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(ProjectDir)\Libraries\Assimp\lib\x64\assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\Libraries\Assimp\lib\x64</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -138,8 +144,10 @@
     <ClCompile Include="src\Engine\Camera\OrthographicCameraBase.cpp" />
     <ClCompile Include="src\Engine\Camera\PerspectiveCameraBase.cpp" />
     <ClCompile Include="src\Engine\Graphics\Mesh\BoxComponent.cpp" />
+    <ClCompile Include="src\Engine\Graphics\Mesh\ModelImporter.h" />
     <ClCompile Include="src\Engine\Graphics\Mesh\SphericalComponent.cpp" />
     <ClCompile Include="src\Engine\Graphics\Mesh\SphericalComponent.h" />
+    <ClCompile Include="src\KatamariDamacy\KatamariDamacyGame.cpp" />
     <ClCompile Include="src\Planetarium\CelestialMotionComponent.cpp" />
     <ClCompile Include="src\Planetarium\PlanetariumGame.cpp" />
     <ClCompile Include="src\Planetarium\PlanetariumGame.h" />
@@ -161,6 +169,7 @@
     <ClInclude Include="src\Engine\Camera\PerspectiveCameraBase.h" />
     <ClInclude Include="src\Engine\Graphics\Mesh\BoxComponent.h" />
     <ClInclude Include="src\Engine\Graphics\ITransformProvider.h" />
+    <ClInclude Include="src\KatamariDamacy\KatamariDamacyGame.h" />
     <ClInclude Include="src\Planetarium\CelestialMotionComponent.h" />
     <ClInclude Include="src\PongGame\PongGame.h" />
     <ClInclude Include="src\Engine\Window\Keys.h" />

@@ -9,6 +9,7 @@
 #include <d3d11.h>
 #include <memory>
 #include <SimpleMath.h>
+#include <string>
 #include <vector>
 #include <wrl.h>
 
@@ -22,6 +23,7 @@ class RenderableComponent : public GameComponent, public ITransformProvider
 {
 public:
     RenderableComponent(GameApp* gameApp);
+    RenderableComponent(GameApp* gameApp, const std::string& modelFile);
 
     void Initialize() override;
     void Draw() override;

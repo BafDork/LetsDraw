@@ -1,11 +1,12 @@
 #pragma comment(lib, "d3dcompiler.lib")
 
-#include "Engine\Camera\CameraBase.h"
-#include "Engine\GameApp.h"
-#include "RenderableComponent.h"
-
 #include <d3dcompiler.h>
 #include <iostream>
+
+#include "Engine\Camera\CameraBase.h"
+#include "Engine\GameApp.h"
+#include "Engine\Graphics\Mesh\ModelImporter.h"
+#include "RenderableComponent.h"
 
 RenderableComponent::RenderableComponent(GameApp* gameApp) :
 	GameComponent(gameApp),
@@ -13,6 +14,20 @@ RenderableComponent::RenderableComponent(GameApp* gameApp) :
 	mContext(mGameApp->GetContext()),
 	mTransform(std::make_unique<TransformComponent>())
 {
+}
+
+RenderableComponent::RenderableComponent(GameApp* gameApp, const std::string& modelFile)
+	: GameComponent(gameApp),
+	mDevice(mGameApp->GetDevice()),
+	mContext(mGameApp->GetContext()),
+	mTransform(std::make_unique<TransformComponent>())
+{
+	if (!ModelImporter::LoadModel(modelFile, mPoints, mIndices))
+	{
+		std::cout << "Failed to load model: " << modelFile << std::endl;
+	}
+
+	mIndexCount = static_cast<UINT>(mIndices.size());
 }
 
 void RenderableComponent::Initialize()

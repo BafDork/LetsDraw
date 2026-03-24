@@ -1,8 +1,8 @@
-#include "Planetarium\PlanetariumGame.h"
+#include "KatamariDamacy/KatamariDamacyGame.h"
 
 int main()
 {
-    PlanetariumGame game(800, 800);
+    KatamariDamacyGame game(800, 800);
 
     if (!game.Initialize())
         return -1;
