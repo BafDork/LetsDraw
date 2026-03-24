@@ -140,7 +140,7 @@ void RenderableComponent::CreateRasterizerState()
 {
 	D3D11_RASTERIZER_DESC rastDesc{};
 	rastDesc.CullMode = D3D11_CULL_NONE;
-	rastDesc.FillMode = D3D11_FILL_SOLID;
+	rastDesc.FillMode = D3D11_FILL_WIREFRAME;
 
 	mDevice->CreateRasterizerState(&rastDesc, &mRastState);
 }

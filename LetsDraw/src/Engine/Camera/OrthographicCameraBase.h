@@ -13,8 +13,6 @@ public:
         float nearZ = 0.1f,
         float farZ = 100.f);
 
-    void Update(float deltaTime) override {};
-
     void UpdateProjection();
 
 protected:

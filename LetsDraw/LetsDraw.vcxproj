@@ -133,6 +133,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Engine\Camera\CameraBase.cpp" />
     <ClCompile Include="src\Engine\Camera\FpsCamera.cpp" />
     <ClCompile Include="src\Engine\Camera\OrthographicCameraBase.cpp" />
     <ClCompile Include="src\Engine\Camera\PerspectiveCameraBase.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="src\Engine\Camera\OrthographicCameraBase.h" />
     <ClInclude Include="src\Engine\Camera\PerspectiveCameraBase.h" />
     <ClInclude Include="src\Graphics\BoxComponent.h" />
+    <ClInclude Include="src\Graphics\ITransformProvider.h" />
     <ClInclude Include="src\Planetarium\CelestialMotionComponent.h" />
     <ClInclude Include="src\PongGame\PongGame.h" />
     <ClInclude Include="src\Window\Keys.h" />

@@ -1,17 +1,18 @@
 #include "CelestialMotionComponent.h"
+#include "Graphics/ITransformProvider.h"
 #include "Graphics/RenderableComponent.h"
 #include "Graphics/TransformComponent.h"
 
 CelestialMotionComponent::CelestialMotionComponent(
     GameApp* game,
-    TransformComponent* transform,
-    TransformComponent* parentTransform,
+    ITransformProvider* owner,
+    ITransformProvider* parent,
     float orbitRadius,
     float orbitSpeed,
     float selfRotationSpeed)
     : GameComponent(game), 
-    mTransform(transform),
-    mParentTransform(parentTransform),
+    mOwner(owner),
+    mParent(parent),
     mOrbitRadius(orbitRadius),
     mOrbitSpeed(orbitSpeed),
     mSelfRotationSpeed(selfRotationSpeed)
@@ -20,19 +21,19 @@ CelestialMotionComponent::CelestialMotionComponent(
 
 void CelestialMotionComponent::Update(float deltaTime)
 {
-    if (mParentTransform)
+    if (mParent)
     {
         mOrbitAngle += mOrbitSpeed * deltaTime;
 
-        auto parentPos = mParentTransform->GetPosition();
+        auto parentPos = mParent->GetTransform()->GetPosition();
 
         float x = parentPos.x + cosf(mOrbitAngle) * mOrbitRadius;
         float z = parentPos.z + sinf(mOrbitAngle) * mOrbitRadius;
 
-        mTransform->SetPosition({ x, 0.f, z });
+        mOwner->GetTransform()->SetPosition({ x, 0.f, z });
     }
 
     mSelfRotationAngle += mSelfRotationSpeed * deltaTime;
 
-    mTransform->SetRotation({ 0.f, mSelfRotationAngle, 0.f });
+    mOwner->GetTransform()->SetRotation({ 0.f, mSelfRotationAngle, 0.f });
 }

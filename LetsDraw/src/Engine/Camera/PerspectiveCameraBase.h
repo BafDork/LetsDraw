@@ -15,9 +15,9 @@ public:
 
     void UpdateProjection();
 
-    void Update(float deltaTime) override {};
-
     void SetAspect(float aspect);
+
+    float GetFov() const { return mFov; }
 
 protected:
     float mFov;

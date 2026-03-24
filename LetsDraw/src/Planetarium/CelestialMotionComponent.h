@@ -6,15 +6,15 @@
 using DirectX::SimpleMath::Vector4;
 
 class GameApp;
-class TransformComponent;
+class ITransformProvider;
 
 class CelestialMotionComponent : public GameComponent
 {
 public:
     CelestialMotionComponent(
         GameApp* game,
-        TransformComponent* transform,
-        TransformComponent* parentTransform,
+        ITransformProvider* owner,
+        ITransformProvider* parent,
         float orbitRadius = 0.0f,
         float orbitSpeed = 0.0f,
         float selfRotationSpeed = 0.0f);
@@ -22,8 +22,8 @@ public:
     void Update(float deltaTime) override;
 
 private:
-    TransformComponent* mTransform;
-    TransformComponent* mParentTransform;
+    ITransformProvider* mOwner;
+    ITransformProvider* mParent;
 
     float mOrbitRadius;
     float mOrbitSpeed;

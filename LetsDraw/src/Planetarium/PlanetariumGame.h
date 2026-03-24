@@ -2,6 +2,8 @@
 
 #include "Engine\GameApp.h"
 
+class PerspectiveCameraBase;
+
 class PlanetariumGame : public GameApp
 {
 public:
@@ -13,8 +15,9 @@ protected:
     void OnUpdate(float delta) override;
 
 private:
-    CameraBase* mOrbitCamera = nullptr;
     CameraBase* mFpsCamera = nullptr;
+    PerspectiveCameraBase* mSunCamera = nullptr;
+    PerspectiveCameraBase* mEarthCamera = nullptr;
 
     float moveSpeed = 5.0f;
 };

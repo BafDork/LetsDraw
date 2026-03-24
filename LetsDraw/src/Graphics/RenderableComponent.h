@@ -2,6 +2,7 @@
 #pragma comment(lib, "d3d11.lib")
 
 #include "Engine\GameComponent.h"
+#include "ITransformProvider.h"
 #include "TransformComponent.h"
 #include "Vertex.h"
 
@@ -17,7 +18,7 @@ using DirectX::SimpleMath::Matrix;
 class GameApp;
 class CameraComponent;
 
-class RenderableComponent : public GameComponent
+class RenderableComponent : public GameComponent, public ITransformProvider
 {
 public:
     RenderableComponent(GameApp* gameApp);
@@ -25,7 +26,7 @@ public:
     void Initialize() override;
     void Draw() override;
 
-    TransformComponent* GetTransform() const { return mTransform.get(); }
+    TransformComponent* GetTransform() { return mTransform.get(); }
     void SetTransform(std::unique_ptr<TransformComponent> transform) { mTransform = std::move(transform); }
 
 protected:

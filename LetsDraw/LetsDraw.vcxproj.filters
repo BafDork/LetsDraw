@@ -77,6 +77,9 @@
     <ClCompile Include="src\Engine\Camera\FpsCamera.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\Camera\CameraBase.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Window\DisplayWin32.h">
@@ -128,6 +131,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Camera\FpsCamera.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\ITransformProvider.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

@@ -13,12 +13,13 @@ PlanetariumGame::PlanetariumGame(int width, int height)
 
 void PlanetariumGame::OnCreateGame()
 {
-    auto sunMesh = std::make_unique<SphericalComponent>(this, 1.5f);
+    auto sunRadius = 1.5f;
+    auto sunMesh = std::make_unique<SphericalComponent>(this, sunRadius);
     sunMesh->SetColor({ 1.0f, 1.0f, 0.0f, 1.0f });
-    TransformComponent* sunTransform = sunMesh->GetTransform();
+	SphericalComponent* sunMeshPtr = sunMesh.get();
 
     auto sunMotion = std::make_unique<CelestialMotionComponent>(
-        this, sunTransform, nullptr, 0.f, 0.f, 0.2f);
+        this, sunMesh.get(), nullptr, 0.f, 0.f, 0.2f);
     AddComponent(std::move(sunMesh));
     AddComponent(std::move(sunMotion));
 
@@ -26,7 +27,7 @@ void PlanetariumGame::OnCreateGame()
     mercuryMesh->SetColor({ 0.6f, 0.6f, 0.6f, 1.0f });
 
     auto mercuryMotion = std::make_unique<CelestialMotionComponent>(
-        this, mercuryMesh->GetTransform(), sunTransform, 2.0f, 1.2f, 0.5f);
+        this, mercuryMesh.get(), sunMeshPtr, 2.0f, 1.2f, 0.5f);
     AddComponent(std::move(mercuryMesh));
     AddComponent(std::move(mercuryMotion));
 
@@ -34,16 +35,17 @@ void PlanetariumGame::OnCreateGame()
     venusMesh->SetColor({ 1.0f, 0.8f, 0.0f, 1.0f });
 
     auto venusMotion = std::make_unique<CelestialMotionComponent>(
-        this, venusMesh->GetTransform(), sunTransform, 3.5f, 0.8f, 0.4f);
+        this, venusMesh.get(), sunMeshPtr, 3.5f, 0.8f, 0.4f);
     AddComponent(std::move(venusMesh));
     AddComponent(std::move(venusMotion));
 
-    auto earthMesh = std::make_unique<SphericalComponent>(this, 0.5f);
+    auto earthRadius = 0.5f;
+    auto earthMesh = std::make_unique<SphericalComponent>(this, earthRadius);
     earthMesh->SetColor({ 0.0f, 0.1f, 0.9f, 1.0f });
-    TransformComponent* earthTransform = earthMesh->GetTransform();
+	SphericalComponent* earthMeshPtr = earthMesh.get();
 
     auto earthMotion = std::make_unique<CelestialMotionComponent>(
-        this, earthTransform, sunTransform, 5.0f, 0.5f, 0.5f);
+        this, earthMesh.get(), sunMeshPtr, 5.0f, 0.5f, 0.5f);
     AddComponent(std::move(earthMesh));
     AddComponent(std::move(earthMotion));
 
@@ -51,16 +53,16 @@ void PlanetariumGame::OnCreateGame()
     moonMesh->SetColor({ 0.6f, 0.6f, 0.6f, 1.0f });
 
     auto moonMotion = std::make_unique<CelestialMotionComponent>(
-        this, moonMesh->GetTransform(), earthTransform, 1.5f, 2.0f, 0.6f);
+        this, moonMesh.get(), earthMeshPtr, 1.5f, 2.0f, 0.6f);
     AddComponent(std::move(moonMesh));
     AddComponent(std::move(moonMotion));
 
     auto marsMesh = std::make_unique<BoxComponent>(this, 0.3f, 0.3f, 0.3f);
     marsMesh->SetColor({ 0.9f, 0.3f, 0.1f, 1.0f });
-    TransformComponent* marsTransform = marsMesh->GetTransform();
+	BoxComponent* marsMeshPtr = marsMesh.get();
 
     auto marsMotion = std::make_unique<CelestialMotionComponent>(
-        this, marsTransform, sunTransform, 8.0f, 0.3f, 0.3f);
+        this, marsMesh.get(), sunMeshPtr, 8.0f, 0.3f, 0.3f);
     AddComponent(std::move(marsMesh));
     AddComponent(std::move(marsMotion));
 
@@ -68,7 +70,7 @@ void PlanetariumGame::OnCreateGame()
     phobosMesh->SetColor({ 0.7f, 0.7f, 0.7f, 1.0f });
 
     auto phobosMotion = std::make_unique<CelestialMotionComponent>(
-        this, phobosMesh->GetTransform(), marsTransform, 0.6f, 1.5f, 0.6f);
+        this, phobosMesh.get(), marsMeshPtr, 0.6f, 1.5f, 0.6f);
     AddComponent(std::move(phobosMesh));
     AddComponent(std::move(phobosMotion));
 
@@ -76,7 +78,7 @@ void PlanetariumGame::OnCreateGame()
     deimosMesh->SetColor({ 0.6f, 0.6f, 0.6f, 1.0f });
 
     auto deimosMotion = std::make_unique<CelestialMotionComponent>(
-        this, deimosMesh->GetTransform(), marsTransform, 1.0f, 1.2f, 0.5f);
+        this, deimosMesh.get(), marsMeshPtr, 1.0f, 1.2f, 0.5f);
     AddComponent(std::move(deimosMesh));
     AddComponent(std::move(deimosMotion));
 
@@ -84,7 +86,7 @@ void PlanetariumGame::OnCreateGame()
     jupiterMesh->SetColor({ 0.9f, 0.6f, 0.3f, 1.0f });
 
     auto jupiterMotion = std::make_unique<CelestialMotionComponent>(
-        this, jupiterMesh->GetTransform(), sunTransform, 11.0f, 0.2f, 0.2f);
+        this, jupiterMesh.get(), sunMeshPtr, 11.0f, 0.2f, 0.2f);
     AddComponent(std::move(jupiterMesh));
     AddComponent(std::move(jupiterMotion));
 
@@ -92,13 +94,25 @@ void PlanetariumGame::OnCreateGame()
     boxPlanet->SetColor({ 0.2f, 1.0f, 0.2f, 1.0f });
 
     auto boxMotion = std::make_unique<CelestialMotionComponent>(
-        this, boxPlanet->GetTransform(), sunTransform, 12.0f, 0.05f, 0.3f);
+        this, boxPlanet.get(), sunMeshPtr, 12.0f, 0.05f, 0.3f);
     AddComponent(std::move(boxPlanet));
     AddComponent(std::move(boxMotion));
 
-    auto cameraMotion = std::make_unique<CelestialMotionComponent>(
-        this, mOrbitCamera->GetTransform(), sunTransform, 15.0f, 0.1f, 0.f);
-    AddComponent(std::move(cameraMotion));
+    float fovYRad = DirectX::XMConvertToRadians(mSunCamera->GetFov());
+    float distance = sunRadius / std::tan(fovYRad * 0.5f);
+
+    auto sunCameraMotion = std::make_unique<CelestialMotionComponent>(
+        this, mSunCamera, sunMeshPtr, distance, 0.f, 0.f);
+	mSunCamera->SetTarget(sunMeshPtr);
+    AddComponent(std::move(sunCameraMotion));
+
+    fovYRad = DirectX::XMConvertToRadians(mEarthCamera->GetFov());
+    distance = earthRadius / std::tan(fovYRad * 0.5f);
+
+    auto earthCameraMotion = std::make_unique<CelestialMotionComponent>(
+        this, mEarthCamera, earthMeshPtr, distance, 0.f, 0.f);
+    mEarthCamera->SetTarget(earthMeshPtr);
+    AddComponent(std::move(earthCameraMotion));
 }
 
 void PlanetariumGame::CreateCamera()
@@ -106,17 +120,21 @@ void PlanetariumGame::CreateCamera()
     float aspect = static_cast<float>(mClientWidth) / mClientHeight;
 
     auto fpsCam = std::make_unique<FpsCamera>(this);
-    fpsCam->GetTransform()->SetPosition({ 0, 0, 0 });
     fpsCam->SetAspect(aspect);
     mFpsCamera = fpsCam.get();
     AddComponent(std::move(fpsCam));
 
-    auto orbitCamera = std::make_unique<FpsCamera>(this);
-    orbitCamera->SetAspect(aspect);
-	mOrbitCamera = orbitCamera.get();
-    AddComponent(std::move(orbitCamera));
+    auto sunCamera = std::make_unique<PerspectiveCameraBase>(this);
+    sunCamera->SetAspect(aspect);
+	mSunCamera = sunCamera.get();
+    AddComponent(std::move(sunCamera));
 
-    mCamera = mOrbitCamera;
+    auto earthCamera = std::make_unique<PerspectiveCameraBase>(this);
+    earthCamera->SetAspect(aspect);
+    mEarthCamera = earthCamera.get();
+    AddComponent(std::move(earthCamera));
+
+    mCamera = mSunCamera;
 }
 
 void PlanetariumGame::OnUpdate(float delta)
@@ -141,9 +159,14 @@ void PlanetariumGame::OnUpdate(float delta)
 
     if (mInput->IsKeyPressed(static_cast<int>(Keys::C)))
     {
-        if (mCamera == mOrbitCamera)
-            mCamera = mFpsCamera;
-        else
-            mCamera = mOrbitCamera;
+        mCamera = mFpsCamera;
+    }
+    if (mInput->IsKeyPressed(static_cast<int>(Keys::D1)))
+    {
+        mCamera = mSunCamera;
+    }
+    if (mInput->IsKeyPressed(static_cast<int>(Keys::D2)))
+    {
+        mCamera = mEarthCamera;
     }
 }

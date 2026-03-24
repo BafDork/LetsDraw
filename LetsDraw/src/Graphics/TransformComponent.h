@@ -10,13 +10,12 @@ class TransformComponent
 public:
     TransformComponent() = default;
 
-    void SetPosition(const Vector3& position);
-    void Translate(const Vector3& delta);
+    void SetPosition(const Vector3& position) { mPosition = position; }
+    void SetRotation(const Vector3& rotation) { mRotation = rotation; }
+    void SetScale(const Vector3& scale) { mScale = scale; }
 
-    void SetScale(const Vector3& scale);
-
-    void SetRotation(const Vector3& rotation);
-    void Rotate(const Vector3& delta);
+    void Translate(const Vector3& delta) { mPosition += delta; }
+    void Rotate(const Vector3& delta) { mRotation += delta; }
 
     Matrix GetWorldMatrix() const;
 
@@ -26,6 +25,6 @@ public:
 
 private:
     Vector3 mPosition{ 0.0f, 0.0f, 0.0f };
-    Vector3 mRotation{ 0.0f, 0.0f, 0.0f };
+    Vector3 mRotation{ 0.0f, 0.0f, 0.0f };  // pitch yaw roll
     Vector3 mScale{ 1.0f, 1.0f, 1.0f };
 };
