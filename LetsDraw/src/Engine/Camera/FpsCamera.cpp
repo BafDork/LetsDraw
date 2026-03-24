@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Engine/GameApp.h"
+#include "Engine/Graphics/TransformComponent.h"
 #include "FpsCamera.h"
-#include "Graphics/TransformComponent.h"
 
 void FpsCamera::Update(float deltaTime)
 {

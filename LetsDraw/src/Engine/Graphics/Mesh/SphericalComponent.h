@@ -1,6 +1,6 @@
 #pragma once
 
-#include "RenderableComponent.h"
+#include "Engine\Graphics\RenderableComponent.h"
 
 using DirectX::SimpleMath::Vector4;
 

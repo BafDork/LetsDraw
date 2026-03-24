@@ -2,9 +2,9 @@
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
 
+#include "Engine\Window\DisplayWin32.h"
+#include "Engine\Window\InputDevice.h"
 #include "GameComponent.h"
-#include "Window\DisplayWin32.h"
-#include "Window\InputDevice.h"
 
 #include <chrono>
 #include <d3d11.h>

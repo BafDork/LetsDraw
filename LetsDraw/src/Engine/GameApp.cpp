@@ -1,9 +1,9 @@
 #include <iostream>
 
 #include "Engine\Camera\OrthographicCameraBase.h"
-#include "Graphics\TransformComponent.h"
+#include "Engine\Graphics\TransformComponent.h"
+#include "Engine\Window\Keys.h"
 #include "GameApp.h"
-#include "Window\Keys.h"
 
 GameApp::GameApp(int width, int height) : 
     mClientWidth(width),

@@ -4,8 +4,8 @@
 #include <SimpleMath.h>
 
 #include "Engine/GameComponent.h"
-#include "Graphics/ITransformProvider.h"
-#include "Graphics/TransformComponent.h"
+#include "Engine/Graphics/ITransformProvider.h"
+#include "Engine/Graphics/TransformComponent.h"
 
 using DirectX::SimpleMath::Vector3;
 using DirectX::SimpleMath::Matrix;

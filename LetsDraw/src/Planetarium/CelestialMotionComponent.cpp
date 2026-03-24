@@ -1,7 +1,7 @@
 #include "CelestialMotionComponent.h"
-#include "Graphics/ITransformProvider.h"
-#include "Graphics/RenderableComponent.h"
-#include "Graphics/TransformComponent.h"
+#include "Engine/Graphics/ITransformProvider.h"
+#include "Engine/Graphics/RenderableComponent.h"
+#include "Engine/Graphics/TransformComponent.h"
 
 CelestialMotionComponent::CelestialMotionComponent(
     GameApp* game,

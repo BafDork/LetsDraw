@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Graphics\CollisionComponent.h"
-#include "Graphics\RenderableComponent.h"
+#include "Engine\Graphics\CollisionComponent.h"
+#include "Engine\Graphics\RenderableComponent.h"
 
 #include <SimpleMath.h>
 

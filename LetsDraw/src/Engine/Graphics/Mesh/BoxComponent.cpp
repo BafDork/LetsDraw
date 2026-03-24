@@ -1,6 +1,6 @@
 #include "BoxComponent.h"
 #include "Engine/GameApp.h"
-#include "Graphics/Vertex.h"
+#include "Engine/Graphics/Vertex.h"
 
 BoxComponent::BoxComponent(GameApp* gameApp, float width, float height, float depth)
     : RenderableComponent(gameApp), mWidth(width), mHeight(height),mDepth(depth)

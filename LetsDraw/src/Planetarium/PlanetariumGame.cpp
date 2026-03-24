@@ -1,10 +1,10 @@
 #include "CelestialMotionComponent.h"
 #include "Engine/Camera/FpsCamera.h"
 #include "Engine/Camera/PerspectiveCameraBase.h"
-#include "Graphics/BoxComponent.h"
-#include "Graphics/SphericalComponent.h"
+#include "Engine/Graphics/Mesh/BoxComponent.h"
+#include "Engine/Graphics/Mesh/SphericalComponent.h"
+#include "Engine/Window/Keys.h"
 #include "PlanetariumGame.h"
-#include "Window\Keys.h"
 
 PlanetariumGame::PlanetariumGame(int width, int height)
     : GameApp(width, height)
