@@ -1,5 +1,5 @@
 #include "CollisionComponent.h"
-#include "TransformComponent.h"
+#include "Engine/Graphics/TransformComponent.h"
 
 CollisionComponent::CollisionComponent(
     TransformComponent* transform,

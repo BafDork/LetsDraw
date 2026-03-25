@@ -2,6 +2,8 @@
 
 #include "Engine\GameApp.h"
 
+class SphericalComponent;
+
 class KatamariDamacyGame : public GameApp
 {
 public:
@@ -14,6 +16,8 @@ protected:
 
 private:
     CameraBase* mFpsCamera = nullptr;
+	SphericalComponent* mBall = nullptr;
 
-    float moveSpeed = 1.0f;
+    float moveSpeed = 3.0f;
+	float mBallRadius = 0.5f;
 };

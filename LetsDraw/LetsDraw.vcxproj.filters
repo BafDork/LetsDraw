@@ -35,9 +35,6 @@
     <ClCompile Include="src\Engine\Graphics\TransformComponent.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Graphics\CollisionComponent.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="src\PongGame\RacketComponent.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -86,6 +83,9 @@
     <ClCompile Include="src\KatamariDamacy\KatamariDamacyGame.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\Graphics\Collision\CollisionComponent.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Engine\Window\DisplayWin32.h">
@@ -104,9 +104,6 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Graphics\TransformComponent.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Graphics\CollisionComponent.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\PongGame\RacketComponent.h">
@@ -143,6 +140,12 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\KatamariDamacy\KatamariDamacyGame.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Graphics\Collision\CollisionComponent.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\GameComponent.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

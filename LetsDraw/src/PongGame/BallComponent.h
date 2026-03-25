@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine\Graphics\CollisionComponent.h"
+#include "Engine\Graphics\Collision\CollisionComponent.h"
 #include "Engine\Graphics\RenderableComponent.h"
 
 #include <SimpleMath.h>
