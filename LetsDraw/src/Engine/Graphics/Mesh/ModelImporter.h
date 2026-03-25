@@ -6,6 +6,9 @@
 
 #include "Engine/Graphics/Vertex.h"
 
+using DirectX::SimpleMath::Vector4;
+using DirectX::SimpleMath::Vector2;
+
 class ModelImporter
 {
 public:
@@ -36,15 +39,16 @@ public:
             for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
             {
                 Vertex v;
-                v.position = DirectX::SimpleMath::Vector4(
+                v.position = Vector4(
                     mesh->mVertices[i].x,
                     mesh->mVertices[i].y,
                     mesh->mVertices[i].z,
                     1.0f);
 
+                // Vertex color
                 if (mesh->HasVertexColors(0))
                 {
-                    v.color = DirectX::SimpleMath::Vector4(
+                    v.color = Vector4(
                         mesh->mColors[0][i].r,
                         mesh->mColors[0][i].g,
                         mesh->mColors[0][i].b,
@@ -52,22 +56,34 @@ public:
                 }
                 else
                 {
-                    v.color = DirectX::SimpleMath::Vector4(1, 1, 1, 1);
+                    v.color = Vector4(1, 1, 1, 1);
+                }
+
+                // UV координаты
+                if (mesh->HasTextureCoords(0))
+                {
+                    v.uv = Vector2(
+                        mesh->mTextureCoords[0][i].x,
+                        mesh->mTextureCoords[0][i].y);
+                }
+                else
+                {
+                    v.uv = Vector2(0, 0);
                 }
 
                 outVertices.push_back(v);
             }
 
+            // Индексы
             for (unsigned int i = 0; i < mesh->mNumFaces; ++i)
             {
                 aiFace& face = mesh->mFaces[i];
-                if (face.mNumIndices != 3) continue;
+                if (face.mNumIndices != 3) continue; // только треугольники
                 outIndices.push_back(face.mIndices[0]);
                 outIndices.push_back(face.mIndices[1]);
                 outIndices.push_back(face.mIndices[2]);
             }
         }
-
         return true;
     }
 };

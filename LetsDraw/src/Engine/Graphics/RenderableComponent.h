@@ -23,7 +23,7 @@ class RenderableComponent : public GameComponent, public ITransformProvider
 {
 public:
     RenderableComponent(GameApp* gameApp);
-    RenderableComponent(GameApp* gameApp, const std::string& modelFile);
+    RenderableComponent(GameApp* gameApp, const std::string& modelFile, const std::string& textureFile);
 
     void Initialize() override;
     void Draw() override;
@@ -36,6 +36,8 @@ protected:
     virtual void CreateGeometry();
     virtual void CreateRasterizerState();
 	virtual void CreateConstantBuffer();
+    virtual void CreateMaterialBuffer();
+    virtual void CreateSamplerState();
 
     virtual void GetMesh(std::vector<Vertex>& outVertices, std::vector<uint32_t>& outIndices) {}
 
@@ -57,6 +59,10 @@ private:
     ComPtr<ID3D11Buffer> mVertexBuffer;
     ComPtr<ID3D11Buffer> mIndexBuffer;
     ComPtr<ID3D11Buffer> mConstantBuffer;
+    ComPtr<ID3D11Buffer> mMaterialBuffer;
+
+    ComPtr<ID3D11ShaderResourceView> mTextureSRV;
+    ComPtr<ID3D11SamplerState> mSamplerState;
 
     UINT mIndexCount;
     UINT mStride = sizeof(Vertex);
@@ -65,5 +71,11 @@ private:
     struct CBMatrix
     {
         Matrix matrix;
+    };
+
+    struct CBMaterial
+    {
+        int hasTexture;
+        float padding[3];
     };
 };

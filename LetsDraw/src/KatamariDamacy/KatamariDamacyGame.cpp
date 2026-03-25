@@ -3,6 +3,8 @@
 #include "Engine/Window/Keys.h"
 #include "KatamariDamacyGame.h"
 
+#include "Engine/Graphics/Mesh/SphericalComponent.h"
+
 KatamariDamacyGame::KatamariDamacyGame(int width, int height)
     : GameApp(width, height)
 {
@@ -10,7 +12,17 @@ KatamariDamacyGame::KatamariDamacyGame(int width, int height)
 
 void KatamariDamacyGame::OnCreateGame()
 {
-    auto mesh = std::make_unique<RenderableComponent>(this, "./Content/Mike Wazovski.OBJ");
+    auto mesh = std::make_unique<RenderableComponent>(
+        this,
+        "./Content/MikeWazovski/Mike.fbx",
+        "./Content/MikeWazovski/Mike_Material_BaseColor.dds");
+
+    mesh->GetTransform()->Rotate({
+         DirectX::XMConvertToRadians(-90.f),
+         DirectX::XMConvertToRadians(90.f),
+         DirectX::XMConvertToRadians(0.f)
+    });
+
     AddComponent(std::move(mesh));
 }
 

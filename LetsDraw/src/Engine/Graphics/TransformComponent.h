@@ -25,6 +25,6 @@ public:
 
 private:
     Vector3 mPosition{ 0.0f, 0.0f, 0.0f };
-    Vector3 mRotation{ 0.0f, 0.0f, 0.0f };  // pitch yaw roll
+    Vector3 mRotation{ 0.0f, 0.0f, 0.0f };  // Радианы! pitch yaw roll
     Vector3 mScale{ 1.0f, 1.0f, 1.0f };
 };
