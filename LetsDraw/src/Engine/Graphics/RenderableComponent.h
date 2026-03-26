@@ -41,11 +41,12 @@ protected:
 
     virtual void GetMesh(std::vector<Vertex>& outVertices, std::vector<uint32_t>& outIndices) {}
 
+protected:
+    std::unique_ptr<TransformComponent> mTransform;
+
 private:
     std::vector<Vertex> mPoints;
     std::vector<uint32_t> mIndices;
-
-    std::unique_ptr<TransformComponent> mTransform;
 
     ID3D11Device* mDevice = nullptr;
     ID3D11DeviceContext* mContext = nullptr;

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Engine\Graphics\Collision\CollisionComponent.h"
+#include "Engine\Graphics\Collision\ICollisionProvider.h"
 #include "Engine\Graphics\RenderableComponent.h"
 
 using DirectX::SimpleMath::Vector3;
@@ -7,7 +9,7 @@ using DirectX::SimpleMath::Vector4;
 
 class GameApp;
 
-class BoxComponent : public RenderableComponent
+class BoxComponent : public RenderableComponent, public ICollisionProvider
 {
 public:
     BoxComponent(GameApp* gameApp,
@@ -16,6 +18,8 @@ public:
         float depth = 1.0f);
 
     void SetColor(const Vector4& color) { mColor = color; }
+
+    CollisionComponent* GetCollision() override { return mCollision.get(); }
 
 protected:
     void GetMesh(std::vector<Vertex>& outVertices, std::vector<uint32_t>& outIndices) override;
@@ -26,4 +30,6 @@ private:
     float mDepth;
 
     Vector4 mColor{ 1,1,1,1 };
+
+    std::unique_ptr<CollisionComponent> mCollision;
 };

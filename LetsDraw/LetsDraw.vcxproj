@@ -145,6 +145,7 @@
     <ClCompile Include="src\Engine\Camera\PerspectiveCameraBase.cpp" />
     <ClCompile Include="src\Engine\Graphics\Collision\CollisionComponent.cpp" />
     <ClCompile Include="src\Engine\Graphics\Mesh\BoxComponent.cpp" />
+    <ClCompile Include="src\Engine\Graphics\Mesh\CollisionMesh.cpp" />
     <ClCompile Include="src\Engine\Graphics\Mesh\ModelImporter.h" />
     <ClCompile Include="src\Engine\Graphics\Mesh\SphericalComponent.cpp" />
     <ClCompile Include="src\Engine\Graphics\Mesh\SphericalComponent.h" />
@@ -169,8 +170,10 @@
     <ClInclude Include="src\Engine\Camera\PerspectiveCameraBase.h" />
     <ClInclude Include="src\Engine\GameComponent.h" />
     <ClInclude Include="src\Engine\Graphics\Collision\CollisionComponent.h" />
+    <ClInclude Include="src\Engine\Graphics\Collision\ICollisionProvider.h" />
     <ClInclude Include="src\Engine\Graphics\Mesh\BoxComponent.h" />
     <ClInclude Include="src\Engine\Graphics\ITransformProvider.h" />
+    <ClInclude Include="src\Engine\Graphics\Mesh\CollisionMesh.h" />
     <ClInclude Include="src\KatamariDamacy\KatamariDamacyGame.h" />
     <ClInclude Include="src\Planetarium\CelestialMotionComponent.h" />
     <ClInclude Include="src\PongGame\PongGame.h" />

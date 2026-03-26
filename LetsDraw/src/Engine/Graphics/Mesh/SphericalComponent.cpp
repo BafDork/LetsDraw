@@ -6,6 +6,11 @@ SphericalComponent::SphericalComponent(GameApp* gameApp, float radius, int slice
     RenderableComponent(gameApp),
     mRadius(radius), mSlices(slices), mStacks(stacks)
 {
+    DirectX::BoundingSphere localSphere;
+    localSphere.Center = { 0, 0, 0 };
+    localSphere.Radius = mRadius;
+
+    mCollision = std::make_unique<CollisionComponent>(mTransform, localSphere);
 }
 
 void SphericalComponent::GetMesh(std::vector<Vertex>& outVertices, std::vector<uint32_t>& outIndices)

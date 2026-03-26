@@ -23,7 +23,11 @@ public:
     Vector3 GetRotation() const { return mRotation; }
     Vector3 GetScale() const { return mScale; }
 
+    void SetParent(TransformComponent* parent) { mParent = parent; }
+
 private:
+    TransformComponent* mParent = nullptr;
+
     Vector3 mPosition{ 0.0f, 0.0f, 0.0f };
     Vector3 mRotation{ 0.0f, 0.0f, 0.0f };  // Радианы! pitch yaw roll
     Vector3 mScale{ 1.0f, 1.0f, 1.0f };

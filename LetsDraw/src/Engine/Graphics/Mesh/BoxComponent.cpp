@@ -5,6 +5,11 @@
 BoxComponent::BoxComponent(GameApp* gameApp, float width, float height, float depth)
     : RenderableComponent(gameApp), mWidth(width), mHeight(height),mDepth(depth)
 {
+    DirectX::BoundingBox localBounds;
+    localBounds.Center = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
+    localBounds.Extents = DirectX::SimpleMath::Vector3(width / 2.0f, height / 2.0f, depth / 2.0f);
+
+    mCollision = std::make_unique<CollisionComponent>(mTransform, localBounds);
 }
 
 void BoxComponent::GetMesh(std::vector<Vertex>& outVertices,

@@ -6,5 +6,10 @@ Matrix TransformComponent::GetWorldMatrix() const
     Matrix RotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(mRotation.x, mRotation.y, mRotation.z);
     Matrix TranslationMatrix = DirectX::XMMatrixTranslation(mPosition.x, mPosition.y, mPosition.z);
 
-    return ScalingMatrix * RotationMatrix * TranslationMatrix;
+    Matrix local = ScalingMatrix * RotationMatrix * TranslationMatrix;
+
+    if (mParent)
+        return local * mParent->GetWorldMatrix();
+
+    return local;
 }
