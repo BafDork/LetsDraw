@@ -35,31 +35,13 @@
     <ClCompile Include="src\Engine\Graphics\TransformComponent.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\PongGame\RacketComponent.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PongGame\BallComponent.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="src\Engine\GameApp.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PongGame\PongGame.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Planetarium\PlanetariumGame.h">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Planetarium\PlanetariumGame.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Graphics\Mesh\SphericalComponent.h">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Graphics\Mesh\SphericalComponent.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Planetarium\CelestialMotionComponent.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Graphics\Mesh\BoxComponent.cpp">
@@ -109,19 +91,7 @@
     <ClInclude Include="src\Engine\Graphics\TransformComponent.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\PongGame\RacketComponent.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="src\PongGame\BallComponent.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="src\Engine\GameApp.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="src\PongGame\PongGame.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Planetarium\CelestialMotionComponent.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Graphics\Mesh\BoxComponent.h">

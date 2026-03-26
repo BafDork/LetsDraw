@@ -10,7 +10,7 @@ SphericalComponent::SphericalComponent(GameApp* gameApp, float radius, int slice
     localSphere.Center = { 0, 0, 0 };
     localSphere.Radius = mRadius;
 
-    mCollision = std::make_unique<CollisionComponent>(mTransform, localSphere);
+    mCollision = std::make_unique<CollisionComponent>(mTransform.get(), localSphere);
 }
 
 void SphericalComponent::GetMesh(std::vector<Vertex>& outVertices, std::vector<uint32_t>& outIndices)

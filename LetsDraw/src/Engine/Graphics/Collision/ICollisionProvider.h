@@ -2,7 +2,7 @@
 
 class CollisionComponent;
 
-class ICollisionProvider : public ITransformProvider
+class ICollisionProvider
 {
 public:
     virtual ~ICollisionProvider() = default;

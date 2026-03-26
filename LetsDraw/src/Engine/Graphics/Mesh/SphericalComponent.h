@@ -16,7 +16,7 @@ public:
 	void SetColor(const Vector4& color) { mColor = color; }
 
     CollisionComponent* GetCollision() override { return mCollision.get(); }
-
+    
 protected:
     void GetMesh(std::vector<Vertex>& outVertices, std::vector<uint32_t>& outIndices) override;
 

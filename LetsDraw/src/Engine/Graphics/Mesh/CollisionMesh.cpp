@@ -1,4 +1,5 @@
 #include "CollisionMesh.h"
+#include "Engine/Graphics/Collision/CollisionComponent.h"
 #include "Engine/Graphics/Collision/ICollisionProvider.h"
 #include "Engine/Graphics/RenderableComponent.h"
 #include "Engine/Graphics/TransformComponent.h"
@@ -14,5 +15,5 @@ CollisionMesh::CollisionMesh(
     mTransform = std::make_unique<TransformComponent>();
 
     mVisual->GetTransform()->SetParent(mTransform.get());
-    mCollision->GetTransform()->SetParent(mTransform.get());
+    mCollision->GetCollision()->GetTransform()->SetParent(mTransform.get());
 }

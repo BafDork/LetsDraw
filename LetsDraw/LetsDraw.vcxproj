@@ -150,14 +150,8 @@
     <ClCompile Include="src\Engine\Graphics\Mesh\SphericalComponent.cpp" />
     <ClCompile Include="src\Engine\Graphics\Mesh\SphericalComponent.h" />
     <ClCompile Include="src\KatamariDamacy\KatamariDamacyGame.cpp" />
-    <ClCompile Include="src\Planetarium\CelestialMotionComponent.cpp" />
-    <ClCompile Include="src\Planetarium\PlanetariumGame.cpp" />
-    <ClCompile Include="src\Planetarium\PlanetariumGame.h" />
-    <ClCompile Include="src\PongGame\PongGame.cpp" />
     <ClCompile Include="src\Engine\Window\DisplayWin32.cpp" />
     <ClCompile Include="src\Engine\GameApp.cpp" />
-    <ClCompile Include="src\PongGame\BallComponent.cpp" />
-    <ClCompile Include="src\PongGame\RacketComponent.cpp" />
     <ClCompile Include="src\Engine\Graphics\TransformComponent.cpp" />
     <ClCompile Include="src\Engine\Window\InputDevice.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -175,12 +169,8 @@
     <ClInclude Include="src\Engine\Graphics\ITransformProvider.h" />
     <ClInclude Include="src\Engine\Graphics\Mesh\CollisionMesh.h" />
     <ClInclude Include="src\KatamariDamacy\KatamariDamacyGame.h" />
-    <ClInclude Include="src\Planetarium\CelestialMotionComponent.h" />
-    <ClInclude Include="src\PongGame\PongGame.h" />
     <ClInclude Include="src\Engine\Window\Keys.h" />
     <ClInclude Include="src\Engine\GameApp.h" />
-    <ClInclude Include="src\PongGame\BallComponent.h" />
-    <ClInclude Include="src\PongGame\RacketComponent.h" />
     <ClInclude Include="src\Engine\Graphics\TransformComponent.h" />
     <ClInclude Include="src\Engine\Window\DisplayWin32.h" />
     <ClInclude Include="src\Engine\Window\InputDevice.h" />

@@ -31,6 +31,9 @@ public:
     TransformComponent* GetTransform() { return mTransform.get(); }
     void SetTransform(std::unique_ptr<TransformComponent> transform) { mTransform = std::move(transform); }
 
+    void SetVisible(bool visible) { mVisible = visible; }
+    bool IsVisible() const { return mVisible; }
+
 protected:
     virtual void CreateShaders();
     virtual void CreateGeometry();
@@ -68,6 +71,8 @@ private:
     UINT mIndexCount;
     UINT mStride = sizeof(Vertex);
     UINT mOffset = 0;
+
+    bool mVisible = true;
 
     struct CBMatrix
     {

@@ -19,6 +19,7 @@ public:
         ICollisionProvider* collisionMesh);
 
     TransformComponent* GetTransform() override { return mTransform.get(); }
+    CollisionComponent* GetCollision() override { return mCollision->GetCollision(); }
 
 private:
     RenderableComponent* mVisual;

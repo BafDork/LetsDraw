@@ -4,12 +4,14 @@
 #include <DirectXCollision.h>
 #include <memory>
 
+#include "Engine\Graphics\ITransformProvider.h"
+
 using DirectX::BoundingBox;
 using DirectX::BoundingSphere;
 
 class TransformComponent;
 
-class CollisionComponent
+class CollisionComponent : public ITransformProvider
 {
 public:
     CollisionComponent(TransformComponent* transform, BoundingBox localBounds)
@@ -24,6 +26,8 @@ public:
     bool Intersects(const CollisionComponent& other) const;
     bool Intersects(const BoundingBox& other) const;
     bool Intersects(const BoundingSphere& other) const;
+
+    TransformComponent* GetTransform() { return mTransform; }
 
 private:
     BoundingBox GetWorldBounds() const;

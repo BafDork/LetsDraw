@@ -199,13 +199,16 @@ void RenderableComponent::CreateRasterizerState()
 {
 	D3D11_RASTERIZER_DESC rastDesc{};
 	rastDesc.CullMode = D3D11_CULL_NONE;
-	rastDesc.FillMode = D3D11_FILL_WIREFRAME;
+	rastDesc.FillMode = D3D11_FILL_SOLID;
 
 	mDevice->CreateRasterizerState(&rastDesc, &mRastState);
 }
 
 void RenderableComponent::Draw()
 {
+	if (!mVisible)
+		return;
+
 	CBMatrix bufferMatrix {};
 	CameraBase* camera = mGameApp->GetCamera();
 
