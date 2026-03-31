@@ -6,6 +6,7 @@
 #include "Engine/Graphics/RenderableComponent.h"
 #include "Engine/Window/Keys.h"
 #include "KatamariDamacyGame.h"
+#include "WaveSurfaceComponent.h" 
 
 using DirectX::SimpleMath::Quaternion;
 
@@ -16,8 +17,14 @@ KatamariDamacyGame::KatamariDamacyGame(int width, int height)
 
 void KatamariDamacyGame::OnCreateGame()
 {
+    auto floorMesh = std::make_unique<WaveSurfaceComponent>(this);
+    floorMesh->SetColor({ 0.5f, 0.5f, 0.5f, 1.0f });
+
+	mFloor = floorMesh.get();
+    AddComponent(std::move(floorMesh));
+
     auto ballMesh = std::make_unique<SphericalComponent>(this, mBallRadius);
-    ballMesh->SetColor({ 0.5f, 0.5f, 0.5f, 1.0f });
+    ballMesh->SetColor({ 0.5f, 1.f, 0.5f, 1.0f });
 
     mBall = ballMesh.get();
     AddComponent(std::move(ballMesh));
@@ -85,6 +92,7 @@ void KatamariDamacyGame::CreateMike(const Vector3& position)
         collision.get());
 
     mesh->GetTransform()->SetPosition(position);
+    SnapToGround(mesh->GetTransform(), 0.5f);
 
     mStickObjects.push_back(std::move(mesh));
 
@@ -115,6 +123,7 @@ void KatamariDamacyGame::CreateKnuckles(const Vector3& position)
         collision.get());
 
     mesh->GetTransform()->SetPosition(position);
+    SnapToGround(mesh->GetTransform(), 0.5f);
 
     mStickObjects.push_back(std::move(mesh));
 
@@ -183,6 +192,8 @@ void KatamariDamacyGame::UpdateBall(float delta)
 
         ballTransform->Rotate(rotationAxis * angle);
     }
+
+    SnapToGround(ballTransform, mBallRadius);
 }
 
 void KatamariDamacyGame::CheckCollisions()
@@ -215,6 +226,20 @@ void KatamariDamacyGame::CheckCollisions()
             }
         }
     }
+}
+
+void KatamariDamacyGame::SnapToGround(TransformComponent* transform, float heightOffset)
+{
+    if (!mFloor)
+        return;
+
+    Vector3 pos = transform->GetPosition();
+
+    float groundHeight = mFloor->GetHeight(pos.x, pos.z);
+
+    pos.y = groundHeight + heightOffset;
+
+    transform->SetPosition(pos);
 }
 
 void KatamariDamacyGame::OnUpdate(float delta)

@@ -154,6 +154,7 @@
     <ClCompile Include="src\Engine\GameApp.cpp" />
     <ClCompile Include="src\Engine\Graphics\TransformComponent.cpp" />
     <ClCompile Include="src\Engine\Window\InputDevice.cpp" />
+    <ClCompile Include="src\KatamariDamacy\WaveSurfaceComponent.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Engine\Graphics\RenderableComponent.cpp" />
   </ItemGroup>
@@ -176,6 +177,7 @@
     <ClInclude Include="src\Engine\Window\InputDevice.h" />
     <ClInclude Include="src\Engine\Graphics\RenderableComponent.h" />
     <ClInclude Include="src\Engine\Graphics\Vertex.h" />
+    <ClInclude Include="src\KatamariDamacy\WaveSurfaceComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

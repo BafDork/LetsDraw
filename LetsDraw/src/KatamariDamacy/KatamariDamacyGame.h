@@ -9,6 +9,7 @@
 using DirectX::SimpleMath::Vector3;
 
 class SphericalComponent;
+class WaveSurfaceComponent;
 
 class KatamariDamacyGame : public GameApp
 {
@@ -29,10 +30,12 @@ private:
     void SpawnRandomObjects(int count);
     void CreateMike(const Vector3& position);
     void CreateKnuckles(const Vector3& position);
+    void SnapToGround(TransformComponent* transform, float heightOffset);
 
 private:
     CameraBase* mFpsCamera = nullptr;
 	SphericalComponent* mBall = nullptr;
+    WaveSurfaceComponent* mFloor = nullptr;
 
     std::mt19937 mRandom{ std::random_device{}() };
 
