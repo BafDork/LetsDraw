@@ -71,6 +71,19 @@ public:
                     v.uv = Vector2(0, 0);
                 }
 
+                if (mesh->HasNormals())
+                {
+                    v.normal = Vector4(
+                        mesh->mNormals[i].x,
+                        mesh->mNormals[i].y,
+                        mesh->mNormals[i].z,
+                        0.0f);
+                }
+                else
+                {
+                    v.normal = Vector4(0, 1, 0, 0);
+                }
+
                 outVertices.push_back(v);
             }
 

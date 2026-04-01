@@ -14,7 +14,9 @@
 #include <wrl.h>
 
 using Microsoft::WRL::ComPtr;
+
 using DirectX::SimpleMath::Matrix;
+using DirectX::SimpleMath::Vector3;
 
 class GameApp;
 class CameraComponent;
@@ -40,9 +42,13 @@ protected:
     virtual void CreateRasterizerState();
 	virtual void CreateConstantBuffer();
     virtual void CreateMaterialBuffer();
+    virtual void CreateLightBuffer();
     virtual void CreateSamplerState();
 
     virtual void GetMesh(std::vector<Vertex>& outVertices, std::vector<uint32_t>& outIndices) {}
+
+private:
+    bool LoadTexture(const std::string& textureFile, ComPtr<ID3D11ShaderResourceView>& outSRV);
 
 protected:
     std::unique_ptr<TransformComponent> mTransform;
@@ -64,11 +70,12 @@ private:
     ComPtr<ID3D11Buffer> mIndexBuffer;
     ComPtr<ID3D11Buffer> mConstantBuffer;
     ComPtr<ID3D11Buffer> mMaterialBuffer;
+    ComPtr<ID3D11Buffer> mLightBuffer;
 
     ComPtr<ID3D11ShaderResourceView> mTextureSRV;
     ComPtr<ID3D11SamplerState> mSamplerState;
 
-    UINT mIndexCount;
+    UINT mIndexCount = 0;
     UINT mStride = sizeof(Vertex);
     UINT mOffset = 0;
 
@@ -83,5 +90,14 @@ private:
     {
         int hasTexture;
         float padding[3];
+    };
+
+    struct CBLight
+    {
+        Vector3 lightDir;
+        float padding1;
+
+        Vector3 cameraPos;
+        float intensity;
     };
 };

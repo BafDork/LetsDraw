@@ -17,7 +17,9 @@ RenderableComponent::RenderableComponent(GameApp* gameApp) :
 {
 }
 
-RenderableComponent::RenderableComponent(GameApp* gameApp, const std::string& modelFile, const std::string& textureFile)
+RenderableComponent::RenderableComponent(GameApp* gameApp,
+	const std::string& modelFile,
+	const std::string& textureFile)
 	: GameComponent(gameApp),
 	mDevice(mGameApp->GetDevice()),
 	mContext(mGameApp->GetContext()),
@@ -28,20 +30,35 @@ RenderableComponent::RenderableComponent(GameApp* gameApp, const std::string& mo
 		std::cout << "Failed to load model: " << modelFile << std::endl;
 	}
 
+	LoadTexture(textureFile, mTextureSRV);
+
+	mIndexCount = static_cast<UINT>(mIndices.size());
+}
+
+bool RenderableComponent::LoadTexture(const std::string& textureFile, ComPtr<ID3D11ShaderResourceView>& outSRV)
+{
 	std::wstring wTextureFile(textureFile.begin(), textureFile.end());
-	DirectX::CreateDDSTextureFromFile(
+	HRESULT hr = DirectX::CreateDDSTextureFromFile(
 		mDevice,
 		wTextureFile.c_str(),
 		nullptr,
-		mTextureSRV.GetAddressOf());
+		outSRV.GetAddressOf()
+	);
 
-	mIndexCount = static_cast<UINT>(mIndices.size());
+	if (FAILED(hr))
+	{
+		std::cout << "Failed to load texture: " << textureFile << std::endl;
+		return false;
+	}
+
+	return true;
 }
 
 void RenderableComponent::Initialize()
 {
 	CreateConstantBuffer();
 	CreateMaterialBuffer();
+	CreateLightBuffer();
 
 	if (mTextureSRV)
 	{
@@ -122,12 +139,16 @@ void RenderableComponent::CreateShaders()
 
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0,
 		  D3D11_APPEND_ALIGNED_ELEMENT,
+		  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			  
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
+		  D3D11_APPEND_ALIGNED_ELEMENT,
 		  D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
 	mDevice->CreateInputLayout(
 		inputDesc,
-		3,
+		4,
 		vertexCodeBuffer->GetBufferPointer(),
 		vertexCodeBuffer->GetBufferSize(),
 		&mLayout);
@@ -180,6 +201,16 @@ void RenderableComponent::CreateMaterialBuffer()
 	mDevice->CreateBuffer(&materialBufferDesc, nullptr, &mMaterialBuffer);
 }
 
+void RenderableComponent::CreateLightBuffer()
+{
+	D3D11_BUFFER_DESC lightBufferDesc{};
+	lightBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	lightBufferDesc.ByteWidth = sizeof(CBLight);
+	lightBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+	mDevice->CreateBuffer(&lightBufferDesc, nullptr, &mLightBuffer);
+}
+
 void RenderableComponent::CreateSamplerState()
 {
 	D3D11_SAMPLER_DESC samplerDesc = {};
@@ -199,7 +230,7 @@ void RenderableComponent::CreateRasterizerState()
 {
 	D3D11_RASTERIZER_DESC rastDesc{};
 	rastDesc.CullMode = D3D11_CULL_NONE;
-	rastDesc.FillMode = D3D11_FILL_WIREFRAME;
+	rastDesc.FillMode = D3D11_FILL_SOLID;
 
 	mDevice->CreateRasterizerState(&rastDesc, &mRastState);
 }
@@ -224,6 +255,15 @@ void RenderableComponent::Draw()
 
 	mContext->UpdateSubresource(mMaterialBuffer.Get(), 0, nullptr, &materialBuffer, 0, 0);
 	mContext->PSSetConstantBuffers(1, 1, mMaterialBuffer.GetAddressOf());
+
+	CBLight lightBuffer{};
+	lightBuffer.lightDir = { 0.3f, -1.0f, 0.2f };
+	lightBuffer.lightDir.Normalize();
+	lightBuffer.cameraPos = mGameApp->GetCamera()->GetTransform()->GetPosition();
+	lightBuffer.intensity = 1.0f;
+
+	mContext->UpdateSubresource(mLightBuffer.Get(), 0, nullptr, &lightBuffer, 0, 0);
+	mContext->PSSetConstantBuffers(2, 1, mLightBuffer.GetAddressOf());
 
 	mContext->IASetInputLayout(mLayout.Get());
 	mContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

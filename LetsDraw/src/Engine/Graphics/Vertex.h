@@ -10,4 +10,5 @@ struct Vertex
     Vector4 position;
     Vector4 color;
     Vector2 uv;
+    Vector4 normal;
 };

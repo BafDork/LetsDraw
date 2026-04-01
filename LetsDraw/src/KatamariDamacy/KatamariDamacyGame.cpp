@@ -61,7 +61,7 @@ void KatamariDamacyGame::SpawnRandomObjects(int count)
         };
 
         if (i % 2 == 0)
-            CreateMike(pos);
+        CreateMike(pos);
         else
             CreateKnuckles(pos);
     }
