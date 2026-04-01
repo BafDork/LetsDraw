@@ -35,6 +35,20 @@ void WaveSurfaceComponent::GetMesh(std::vector<Vertex>& outVertices, std::vector
             v.position = { posX, posY, posZ, 1.0f };
             v.color = mColor;
 
+            float dfdx =
+                mAmplitude * mFrequency *
+                cosf(posX * mFrequency) *
+                cosf(posZ * mFrequency);
+
+            float dfdz =
+                -mAmplitude * mFrequency *
+                sinf(posX * mFrequency) *
+                sinf(posZ * mFrequency);
+
+            Vector3 normal(-dfdx, 1.0f, -dfdz);
+            normal.Normalize();
+            v.normal = normal;
+
             outVertices.push_back(v);
         }
     }

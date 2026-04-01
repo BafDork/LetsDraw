@@ -7,6 +7,7 @@
 #include "Engine/Graphics/Vertex.h"
 
 using DirectX::SimpleMath::Vector4;
+using DirectX::SimpleMath::Vector3;
 using DirectX::SimpleMath::Vector2;
 
 class ModelImporter
@@ -73,15 +74,15 @@ public:
 
                 if (mesh->HasNormals())
                 {
-                    v.normal = Vector4(
+                    v.normal = Vector3(
                         mesh->mNormals[i].x,
                         mesh->mNormals[i].y,
-                        mesh->mNormals[i].z,
-                        0.0f);
+                        mesh->mNormals[i].z
+                    );
                 }
                 else
                 {
-                    v.normal = Vector4(0, 1, 0, 0);
+                    v.normal = Vector3(0, 1, 0);
                 }
 
                 outVertices.push_back(v);

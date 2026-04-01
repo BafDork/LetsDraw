@@ -32,6 +32,11 @@ void SphericalComponent::GetMesh(std::vector<Vertex>& outVertices, std::vector<u
             Vertex v{};
             v.position = Vector4(x, y, z, 1.0f);
             v.color = mColor;
+
+            Vector3 normal(x, y, z);
+            normal.Normalize();
+            v.normal = normal;
+
             outVertices.push_back(v);
         }
     }
