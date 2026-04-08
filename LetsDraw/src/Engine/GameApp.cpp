@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "Engine\Camera\OrthographicCameraBase.h"
+#include "Engine\Graphics\LightComponent.h"
 #include "Engine\Graphics\TransformComponent.h"
 #include "Engine\Window\Keys.h"
 #include "GameApp.h"
@@ -28,6 +29,7 @@ bool GameApp::Initialize()
         return false;
 
     CreateCamera();
+    CreateMainLight();
     OnCreateGame();
 
     for (auto& component : mComponents)
@@ -138,6 +140,16 @@ void GameApp::CreateCamera()
     mCamera = orthoCamera.get();
 
     AddComponent(std::move(orthoCamera));
+}
+
+void GameApp::CreateMainLight()
+{
+    auto light = std::make_unique<LightComponent>(this);
+    light->SetDirection({ 0.5f, -1.0f, 0.1f });
+    light->SetIntensity(1.0f);
+
+    SetMainLight(light.get());
+    AddComponent(std::move(light));
 }
 
 void GameApp::Run()

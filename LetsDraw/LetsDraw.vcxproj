@@ -144,6 +144,7 @@
     <ClCompile Include="src\Engine\Camera\OrthographicCameraBase.cpp" />
     <ClCompile Include="src\Engine\Camera\PerspectiveCameraBase.cpp" />
     <ClCompile Include="src\Engine\Graphics\Collision\CollisionComponent.cpp" />
+    <ClCompile Include="src\Engine\Graphics\LightComponent.cpp" />
     <ClCompile Include="src\Engine\Graphics\Mesh\BoxComponent.cpp" />
     <ClCompile Include="src\Engine\Graphics\Mesh\CollisionMesh.cpp" />
     <ClCompile Include="src\Engine\Graphics\Mesh\ModelImporter.h" />
@@ -166,6 +167,7 @@
     <ClInclude Include="src\Engine\GameComponent.h" />
     <ClInclude Include="src\Engine\Graphics\Collision\CollisionComponent.h" />
     <ClInclude Include="src\Engine\Graphics\Collision\ICollisionProvider.h" />
+    <ClInclude Include="src\Engine\Graphics\LightComponent.h" />
     <ClInclude Include="src\Engine\Graphics\Mesh\BoxComponent.h" />
     <ClInclude Include="src\Engine\Graphics\ITransformProvider.h" />
     <ClInclude Include="src\Engine\Graphics\Mesh\CollisionMesh.h" />

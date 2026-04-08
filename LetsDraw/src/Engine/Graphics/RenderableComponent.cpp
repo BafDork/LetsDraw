@@ -7,6 +7,7 @@
 #include "Engine\Camera\CameraBase.h"
 #include "Engine\GameApp.h"
 #include "Engine\Graphics\Mesh\ModelImporter.h"
+#include "LightComponent.h"
 #include "RenderableComponent.h"
 
 RenderableComponent::RenderableComponent(GameApp* gameApp) :
@@ -257,10 +258,11 @@ void RenderableComponent::Draw()
 	mContext->PSSetConstantBuffers(1, 1, mMaterialBuffer.GetAddressOf());
 
 	CBLight lightBuffer{};
-	lightBuffer.lightDir = { 0.3f, -1.0f, 0.2f };
-	lightBuffer.lightDir.Normalize();
+	LightComponent* light = mGameApp->GetMainLight();
+
+	lightBuffer.lightDir = light->GetDirection();
+	lightBuffer.intensity = light->GetIntensity();
 	lightBuffer.cameraPos = mGameApp->GetCamera()->GetTransform()->GetPosition();
-	lightBuffer.intensity = 1.0f;
 
 	mContext->UpdateSubresource(mLightBuffer.Get(), 0, nullptr, &lightBuffer, 0, 0);
 	mContext->PSSetConstantBuffers(2, 1, mLightBuffer.GetAddressOf());
