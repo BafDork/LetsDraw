@@ -134,7 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\DefaultShader.hlsl">
+    <FxCompile Include="Shaders\BaseShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>
@@ -150,6 +150,7 @@
     <ClCompile Include="src\Engine\Graphics\Mesh\ModelImporter.h" />
     <ClCompile Include="src\Engine\Graphics\Mesh\SphericalComponent.cpp" />
     <ClCompile Include="src\Engine\Graphics\Mesh\SphericalComponent.h" />
+    <ClCompile Include="src\Engine\Graphics\Shader.cpp" />
     <ClCompile Include="src\KatamariDamacy\KatamariDamacyGame.cpp" />
     <ClCompile Include="src\Engine\Window\DisplayWin32.cpp" />
     <ClCompile Include="src\Engine\GameApp.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="src\Engine\Graphics\Mesh\BoxComponent.h" />
     <ClInclude Include="src\Engine\Graphics\ITransformProvider.h" />
     <ClInclude Include="src\Engine\Graphics\Mesh\CollisionMesh.h" />
+    <ClInclude Include="src\Engine\Graphics\Shader.h" />
     <ClInclude Include="src\KatamariDamacy\KatamariDamacyGame.h" />
     <ClInclude Include="src\Engine\Window\Keys.h" />
     <ClInclude Include="src\Engine\GameApp.h" />

@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\DefaultShader.hlsl">
+    <FxCompile Include="Shaders\BaseShader.hlsl">
       <Filter>Файлы ресурсов</Filter>
     </FxCompile>
   </ItemGroup>
@@ -75,6 +75,9 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Graphics\LightComponent.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Graphics\Shader.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -137,6 +140,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Graphics\LightComponent.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Graphics\Shader.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

@@ -3,6 +3,7 @@
 
 #include "Engine\GameComponent.h"
 #include "ITransformProvider.h"
+#include "Shader.h"
 #include "TransformComponent.h"
 #include "Vertex.h"
 
@@ -63,8 +64,7 @@ private:
     ComPtr<ID3D11InputLayout> mLayout;
     ComPtr<ID3D11RasterizerState> mRastState;
 
-    ComPtr<ID3D11VertexShader> mVertexShader;
-    ComPtr<ID3D11PixelShader> mPixelShader;
+    std::unique_ptr<Shader> mBaseShader;
 
     ComPtr<ID3D11Buffer> mVertexBuffer;
     ComPtr<ID3D11Buffer> mIndexBuffer;

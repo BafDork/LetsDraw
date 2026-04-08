@@ -1,6 +1,3 @@
-#pragma comment(lib, "d3dcompiler.lib")
-
-#include <d3dcompiler.h>
 #include <DDSTextureLoader.h>
 #include <iostream>
 
@@ -73,62 +70,6 @@ void RenderableComponent::Initialize()
 
 void RenderableComponent::CreateShaders()
 {
-	ComPtr<ID3DBlob> vertexCodeBuffer = nullptr;
-	ComPtr<ID3DBlob> pixelCodeBuffer = nullptr;
-	ComPtr<ID3DBlob> errorMessage = nullptr;
-
-	HRESULT result = D3DCompileFromFile(
-		L"./Shaders/DefaultShader.hlsl",
-		nullptr,
-		nullptr,
-		"VSMain",
-		"vs_5_0",
-		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,
-		0,
-		&vertexCodeBuffer,
-		&errorMessage);
-
-	if (FAILED(result))
-	{
-		if (errorMessage)
-			std::cout << "Error compiling vertex shader: "
-			<< (char*) errorMessage->GetBufferPointer()
-			<< std::endl;
-		return;
-	}
-
-	result = D3DCompileFromFile(
-		L"./Shaders/DefaultShader.hlsl",
-		nullptr,
-		nullptr,
-		"PSMain",
-		"ps_5_0",
-		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,
-		0,
-		&pixelCodeBuffer,
-		&errorMessage);
-
-	if (FAILED(result))
-	{
-		if (errorMessage)
-			std::cout << "Error compiling pixel shader: "
-			<< (char*) errorMessage->GetBufferPointer()
-			<< std::endl;
-		return;
-	}
-
-	mDevice->CreateVertexShader(
-		vertexCodeBuffer->GetBufferPointer(),
-		vertexCodeBuffer->GetBufferSize(),
-		nullptr,
-		&mVertexShader);
-
-	mDevice->CreatePixelShader(
-		pixelCodeBuffer->GetBufferPointer(),
-		pixelCodeBuffer->GetBufferSize(),
-		nullptr,
-		&mPixelShader);
-
 	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0,
@@ -147,12 +88,14 @@ void RenderableComponent::CreateShaders()
 		  D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
-	mDevice->CreateInputLayout(
+	mBaseShader = std::make_unique<Shader>();
+	mBaseShader->Load(
+		mDevice,
+		L"./Shaders/BaseShader.hlsl",
+		"VSMain",
+		"PSMain",
 		inputDesc,
-		4,
-		vertexCodeBuffer->GetBufferPointer(),
-		vertexCodeBuffer->GetBufferSize(),
-		&mLayout);
+		4);
 }
 
 void RenderableComponent::CreateGeometry()
@@ -267,14 +210,14 @@ void RenderableComponent::Draw()
 	mContext->UpdateSubresource(mLightBuffer.Get(), 0, nullptr, &lightBuffer, 0, 0);
 	mContext->PSSetConstantBuffers(2, 1, mLightBuffer.GetAddressOf());
 
-	mContext->IASetInputLayout(mLayout.Get());
+	mContext->IASetInputLayout(mBaseShader->GetLayout());
 	mContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	mContext->IASetVertexBuffers(0, 1, mVertexBuffer.GetAddressOf(), &mStride, &mOffset);
 	mContext->IASetIndexBuffer(mIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
-	mContext->VSSetShader(mVertexShader.Get(), nullptr, 0);
-	mContext->PSSetShader(mPixelShader.Get(), nullptr, 0);
+	mContext->VSSetShader(mBaseShader->GetVS(), nullptr, 0);
+	mContext->PSSetShader(mBaseShader->GetPS(), nullptr, 0);
 
 	if (mTextureSRV)
 	{
