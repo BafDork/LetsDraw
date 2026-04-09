@@ -13,6 +13,7 @@ public:
     virtual void Initialize() {}
     virtual void Update(float deltaTime) {}
     virtual void Draw() {}
+    virtual void DrawShadow() {}
     virtual void DestroyResources() {}
 
 protected:

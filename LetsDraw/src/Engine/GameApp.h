@@ -74,6 +74,7 @@ private:
 
     void Update(float deltaTime);
     void Draw();
+    void DrawShadow();
     void EndFrame();
 
 private:

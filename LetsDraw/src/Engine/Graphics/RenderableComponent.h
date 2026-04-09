@@ -30,6 +30,7 @@ public:
 
     void Initialize() override;
     void Draw() override;
+    void DrawShadow() override;
 
     TransformComponent* GetTransform() { return mTransform.get(); }
     void SetTransform(std::unique_ptr<TransformComponent> transform) { mTransform = std::move(transform); }
@@ -65,15 +66,18 @@ private:
     ComPtr<ID3D11RasterizerState> mRastState;
 
     std::unique_ptr<Shader> mBaseShader;
+    std::unique_ptr<Shader> mShadowShader;
 
     ComPtr<ID3D11Buffer> mVertexBuffer;
     ComPtr<ID3D11Buffer> mIndexBuffer;
     ComPtr<ID3D11Buffer> mConstantBuffer;
+    ComPtr<ID3D11Buffer> mLightProjBuffer;
     ComPtr<ID3D11Buffer> mMaterialBuffer;
     ComPtr<ID3D11Buffer> mLightBuffer;
 
     ComPtr<ID3D11ShaderResourceView> mTextureSRV;
     ComPtr<ID3D11SamplerState> mSamplerState;
+    ComPtr<ID3D11SamplerState> mShadowSampler;
 
     UINT mIndexCount = 0;
     UINT mStride = sizeof(Vertex);
@@ -83,7 +87,8 @@ private:
 
     struct CBMatrix
     {
-        Matrix matrix;
+        Matrix worldViewProj;
+        Matrix world;
     };
 
     struct CBMaterial

@@ -63,6 +63,23 @@ void RenderableComponent::Initialize()
 		CreateSamplerState();
 	}
 
+	D3D11_SAMPLER_DESC desc{};
+	desc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
+	desc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
+	desc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+	desc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+	desc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+	desc.BorderColor[0] = 1.0f;
+	desc.BorderColor[1] = 1.0f;
+	desc.BorderColor[2] = 1.0f;
+	desc.BorderColor[3] = 1.0f;
+	desc.MinLOD = 0;
+	desc.MaxLOD = D3D11_FLOAT32_MAX;
+	desc.MipLODBias = 0;
+	desc.MaxAnisotropy = 1;
+
+	HRESULT hr = mDevice->CreateSamplerState(&desc, &mShadowSampler);
+
 	CreateShaders();
 	CreateGeometry();
 	CreateRasterizerState();
@@ -94,6 +111,21 @@ void RenderableComponent::CreateShaders()
 		L"./Shaders/BaseShader.hlsl",
 		"VSMain",
 		"PSMain",
+		inputDesc,
+		4);
+
+	D3D11_INPUT_ELEMENT_DESC layout[] =
+	{
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0,
+			D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
+
+	mShadowShader = std::make_unique<Shader>();
+	mShadowShader->Load(
+		mDevice,
+		L"./Shaders/ShadowShader.hlsl",
+		"VSMain",
+		"",
 		inputDesc,
 		4);
 }
@@ -133,6 +165,7 @@ void RenderableComponent::CreateConstantBuffer()
 	constantBufferDesc.CPUAccessFlags = 0;
 
 	mDevice->CreateBuffer(&constantBufferDesc, nullptr, &mConstantBuffer);
+	mDevice->CreateBuffer(&constantBufferDesc, nullptr, &mLightProjBuffer);
 }
 
 void RenderableComponent::CreateMaterialBuffer()
@@ -179,6 +212,31 @@ void RenderableComponent::CreateRasterizerState()
 	mDevice->CreateRasterizerState(&rastDesc, &mRastState);
 }
 
+void RenderableComponent::DrawShadow()
+{
+	LightComponent* light = mGameApp->GetMainLight();
+	if (!light) return;
+
+	Matrix world = mTransform->GetWorldMatrix();
+	Matrix wvp = world * light->GetLightViewProj();
+
+	CBMatrix cb{};
+	cb.worldViewProj = XMMatrixTranspose(wvp);
+
+	mContext->UpdateSubresource(mConstantBuffer.Get(), 0, nullptr, &cb, 0, 0);
+	mContext->VSSetConstantBuffers(0, 1, mConstantBuffer.GetAddressOf());
+
+	mContext->VSSetShader(mShadowShader->GetVS(), nullptr, 0);
+	mContext->PSSetShader(nullptr, nullptr, 0);
+
+	mContext->IASetInputLayout(mShadowShader->GetLayout());
+	mContext->IASetVertexBuffers(0, 1, mVertexBuffer.GetAddressOf(), &mStride, &mOffset);
+	mContext->IASetIndexBuffer(mIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	mContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	mContext->DrawIndexed(mIndexCount, 0, 0);
+}
+
 void RenderableComponent::Draw()
 {
 	if (!mVisible)
@@ -189,7 +247,8 @@ void RenderableComponent::Draw()
 
 	Matrix worldMatrix = mTransform->GetWorldMatrix();
 	Matrix worldViewProjection = worldMatrix * camera->GetView() * camera->GetProjection();
-	bufferMatrix.matrix = DirectX::XMMatrixTranspose(worldViewProjection);
+	bufferMatrix.world = XMMatrixTranspose(worldMatrix);
+	bufferMatrix.worldViewProj = XMMatrixTranspose(worldViewProjection);
 
 	mContext->UpdateSubresource(mConstantBuffer.Get(), 0, nullptr, &bufferMatrix, 0, 0);
 	mContext->VSSetConstantBuffers(0, 1, mConstantBuffer.GetAddressOf());
@@ -210,6 +269,13 @@ void RenderableComponent::Draw()
 	mContext->UpdateSubresource(mLightBuffer.Get(), 0, nullptr, &lightBuffer, 0, 0);
 	mContext->PSSetConstantBuffers(2, 1, mLightBuffer.GetAddressOf());
 
+	CBMatrix lightMatrix{};
+	Matrix wvp = worldMatrix * light->GetLightViewProj();
+	lightMatrix.worldViewProj = XMMatrixTranspose(wvp);
+
+	mContext->UpdateSubresource(mLightProjBuffer.Get(), 0, nullptr, &lightMatrix, 0, 0);
+	mContext->VSSetConstantBuffers(3, 1, mLightProjBuffer.GetAddressOf());
+
 	mContext->IASetInputLayout(mBaseShader->GetLayout());
 	mContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -225,6 +291,11 @@ void RenderableComponent::Draw()
 		mContext->PSSetSamplers(0, 1, samplers);
 		mContext->PSSetShaderResources(0, 1, mTextureSRV.GetAddressOf());
 	}
+
+	ID3D11SamplerState* samplers2[] = { mShadowSampler.Get() };
+	mContext->PSSetSamplers(1, 1, samplers2);
+	ID3D11ShaderResourceView* shadowSRV = light->GetShadowSRV();
+	mContext->PSSetShaderResources(1, 1, &shadowSRV);
 
 	mContext->RSSetState(mRastState.Get());
 

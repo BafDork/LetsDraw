@@ -11,8 +11,8 @@ class WaveSurfaceComponent : public RenderableComponent
 public:
     WaveSurfaceComponent(
         GameApp* gameApp,
-        float width = 20.f,
-        float depth = 20.f,
+        float width = 50.f,
+        float depth = 50.f,
         int xSegments = 50,
         int zSegments = 50);
 

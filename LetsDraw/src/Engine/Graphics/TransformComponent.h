@@ -2,14 +2,18 @@
 
 #include <SimpleMath.h>
 
+#include "ITransformProvider.h"
+
 using DirectX::SimpleMath::Vector3;
 using DirectX::SimpleMath::Matrix;
 using DirectX::SimpleMath::Quaternion;
 
-class TransformComponent
+class TransformComponent : public ITransformProvider
 {
 public:
     TransformComponent() = default;
+
+    TransformComponent* GetTransform() { return this; }
 
     void SetPosition(const Vector3& position) { mPosition = position; };
     Vector3 GetPosition() const { return mPosition; };

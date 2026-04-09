@@ -177,6 +177,7 @@ void GameApp::Run()
         mPrevTime = curTime;
 
         Update(deltaTime);
+        DrawShadow();
         Draw();
         EndFrame();
     }
@@ -210,6 +211,28 @@ void GameApp::Update(float deltaTime)
     mInput->EndFrame();
 }
 
+void GameApp::DrawShadow()
+{
+    if (!mMainLight) return;
+
+    D3D11_VIEWPORT shadowVP{};
+    shadowVP.TopLeftX = 0;
+    shadowVP.TopLeftY = 0;
+    shadowVP.Width = 2048;
+    shadowVP.Height = 2048;
+    shadowVP.MinDepth = 0.0f;
+    shadowVP.MaxDepth = 1.0f;
+
+    mContext->ClearDepthStencilView(mMainLight->GetShadowDSV(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+    mContext->RSSetViewports(1, &shadowVP);
+    mContext->OMSetRenderTargets(0, nullptr, mMainLight->GetShadowDSV());
+    mContext->OMSetDepthStencilState(mDepthState.Get(), 0);
+
+    for (auto& component : mComponents)
+        component->DrawShadow();
+}
+
 void GameApp::Draw()
 {
     D3D11_VIEWPORT viewport{};
@@ -230,9 +253,7 @@ void GameApp::Draw()
     mContext->OMSetDepthStencilState(mDepthState.Get(), 0);
 
     for (auto& component : mComponents)
-    {
         component->Draw();
-    }
 }
 
 void GameApp::AddComponent(std::unique_ptr<GameComponent> component)
