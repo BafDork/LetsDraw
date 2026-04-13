@@ -1,20 +1,18 @@
+#include "DirectionalLightComponent.h"
 #include "Engine/GameApp.h"
-#include "LightComponent.h"
-#include "Engine/Camera/CameraBase.h"
 
-LightComponent::LightComponent(GameApp* game)
-    : GameComponent(game),
-    mTransform(std::make_unique<TransformComponent>())
+DirectionalLightComponent::DirectionalLightComponent(GameApp* game)
+    : BaseLightComponent(game)
 {
     mDirection.Normalize();
 }
 
-void LightComponent::Initialize()
+void DirectionalLightComponent::Initialize()
 {
     CreateShadowMap();
 }
 
-void LightComponent::CreateShadowMap()
+void DirectionalLightComponent::CreateShadowMap()
 {
     auto device = mGameApp->GetDevice();
 
@@ -51,12 +49,10 @@ void LightComponent::CreateShadowMap()
         &mShadowSRV);
 }
 
-void LightComponent::Update(float deltaTime)
+void DirectionalLightComponent::Update(float deltaTime)
 {
-    Vector3 dir = GetDirection();
-
-    Vector3 lightPos = -dir * 50.0f;
-    Vector3 target = { 0,0,0 };
+    Vector3 lightPos = -mDirection * 50.0f;
+    Vector3 target = { 0, 0, 0 };
 
     Matrix view = Matrix::CreateLookAt(lightPos, target, Vector3::Up);
     Matrix proj = Matrix::CreateOrthographic(40.f, 40.f, 1.f, 100.f);
@@ -64,13 +60,13 @@ void LightComponent::Update(float deltaTime)
     mLightViewProj = view * proj;
 }
 
-void LightComponent::SetDirection(const Vector3& dir)
+void DirectionalLightComponent::SetDirection(const Vector3& dir)
 {
     mDirection = dir;
     mDirection.Normalize();
 }
 
-Vector3 LightComponent::GetDirection() const
+Vector3 DirectionalLightComponent::GetDirection() const
 {
     return mDirection;
 }

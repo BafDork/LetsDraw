@@ -74,10 +74,10 @@
     <ClCompile Include="src\KatamariDamacy\WaveSurfaceComponent.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Graphics\LightComponent.cpp">
+    <ClCompile Include="src\Engine\Graphics\Shader.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Graphics\Shader.cpp">
+    <ClCompile Include="src\Engine\Graphics\Light\DirectionalLightComponent.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -139,10 +139,16 @@
     <ClInclude Include="src\KatamariDamacy\WaveSurfaceComponent.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Graphics\LightComponent.h">
+    <ClInclude Include="src\Engine\Graphics\Shader.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Graphics\Shader.h">
+    <ClInclude Include="src\Engine\Graphics\Light\BaseLightComponent.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Graphics\Light\DirectionalLightComponent.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Graphics\Light\PointLightComponent.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

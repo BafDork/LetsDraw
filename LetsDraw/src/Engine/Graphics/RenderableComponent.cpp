@@ -3,8 +3,8 @@
 
 #include "Engine\Camera\CameraBase.h"
 #include "Engine\GameApp.h"
+#include "Engine\Graphics\Light\DirectionalLightComponent.h"
 #include "Engine\Graphics\Mesh\ModelImporter.h"
-#include "LightComponent.h"
 #include "RenderableComponent.h"
 
 RenderableComponent::RenderableComponent(GameApp* gameApp) :
@@ -214,7 +214,10 @@ void RenderableComponent::CreateRasterizerState()
 
 void RenderableComponent::DrawShadow()
 {
-	LightComponent* light = mGameApp->GetMainLight();
+	if (!mVisible)
+		return;
+
+	DirectionalLightComponent* light = mGameApp->GetMainLight();
 	if (!light) return;
 
 	Matrix world = mTransform->GetWorldMatrix();
@@ -260,7 +263,7 @@ void RenderableComponent::Draw()
 	mContext->PSSetConstantBuffers(1, 1, mMaterialBuffer.GetAddressOf());
 
 	CBLight lightBuffer{};
-	LightComponent* light = mGameApp->GetMainLight();
+	DirectionalLightComponent* light = mGameApp->GetMainLight();
 
 	lightBuffer.lightDir = light->GetDirection();
 	lightBuffer.intensity = light->GetIntensity();

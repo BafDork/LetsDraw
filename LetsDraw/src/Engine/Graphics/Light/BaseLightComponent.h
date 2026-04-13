@@ -1,0 +1,37 @@
+#pragma once
+
+#include <memory>
+#include <SimpleMath.h>
+
+#include "Engine/GameComponent.h"
+#include "Engine/Graphics/ITransformProvider.h"
+#include "Engine/Graphics/TransformComponent.h"
+
+using DirectX::SimpleMath::Vector3;
+
+class GameApp;
+
+class BaseLightComponent : public GameComponent, public ITransformProvider
+{
+public:
+    BaseLightComponent(GameApp* game) :
+        GameComponent(game),
+        mTransform(std::make_unique<TransformComponent>()) {}
+
+    void Initialize() override {}
+    void Update(float deltaTime) override {}
+
+    TransformComponent* GetTransform() { return mTransform.get(); }
+
+    void SetIntensity(float intensity) { mIntensity = intensity; }
+    float GetIntensity() const { return mIntensity; }
+
+    void SetColor(const Vector3& color) { mColor = color; }
+    Vector3 GetColor() const { return mColor; }
+
+protected:
+    std::unique_ptr<TransformComponent> mTransform;
+
+    float mIntensity = 1.0f;
+    Vector3 mColor = { 1.0f, 1.0f, 1.0f };
+};

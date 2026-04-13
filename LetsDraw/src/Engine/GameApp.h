@@ -14,8 +14,8 @@
 using Microsoft::WRL::ComPtr;
 
 class GameComponent;
-class LightComponent;
 class CameraBase;
+class DirectionalLightComponent;
 
 class GameApp
 {
@@ -35,8 +35,8 @@ public:
     int GetClientWidth() const { return mClientWidth; }
 	int GetClientHeight() const { return mClientHeight; }
     
-    void SetMainLight(LightComponent* light) { mMainLight = light; }
-    LightComponent* GetMainLight() const { return mMainLight; }
+    void SetMainLight(DirectionalLightComponent* light) { mMainLight = light; }
+    DirectionalLightComponent* GetMainLight() const { return mMainLight; }
 
 protected:
     virtual void CreateCamera();
@@ -65,7 +65,7 @@ protected:
     ComPtr<ID3D11DepthStencilState> mDepthState;
 
     CameraBase* mCamera = nullptr;
-    LightComponent* mMainLight = nullptr;
+    DirectionalLightComponent* mMainLight = nullptr;
 
 private:
     bool InitializeD3D();

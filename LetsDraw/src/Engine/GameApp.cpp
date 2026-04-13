@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "Engine\Camera\OrthographicCameraBase.h"
-#include "Engine\Graphics\LightComponent.h"
+#include "Engine\Graphics\Light\DirectionalLightComponent.h"
 #include "Engine\Graphics\TransformComponent.h"
 #include "Engine\Window\Keys.h"
 #include "GameApp.h"
@@ -144,7 +144,7 @@ void GameApp::CreateCamera()
 
 void GameApp::CreateMainLight()
 {
-    auto light = std::make_unique<LightComponent>(this);
+    auto light = std::make_unique<DirectionalLightComponent>(this);
     light->SetDirection({ 0.5f, -1.0f, 0.1f });
     light->SetIntensity(1.0f);
 
