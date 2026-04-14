@@ -1,11 +1,13 @@
 #include <SimpleMath.h>
 
 #include "Engine/Camera/FpsCamera.h"
+#include "Engine/Graphics/Light/PointLightComponent.h"
 #include "Engine/Graphics/Mesh/BoxComponent.h"
 #include "Engine/Graphics/Mesh/SphericalComponent.h"
 #include "Engine/Graphics/RenderableComponent.h"
 #include "Engine/Window/Keys.h"
 #include "KatamariDamacyGame.h"
+#include "Planetarium/CelestialMotionComponent.h"
 #include "WaveSurfaceComponent.h" 
 
 using DirectX::SimpleMath::Quaternion;
@@ -30,6 +32,7 @@ void KatamariDamacyGame::OnCreateGame()
     AddComponent(std::move(ballMesh));
 
     SpawnRandomObjects(6);
+    SpawnLightVortex(128);
 }
 
 void KatamariDamacyGame::CreateCamera()
@@ -129,6 +132,54 @@ void KatamariDamacyGame::CreateKnuckles(const Vector3& position)
 
     AddComponent(std::move(visual));
     AddComponent(std::move(collision));
+}
+
+void KatamariDamacyGame::SpawnLightVortex(int count)
+{
+    for (int i = 0; i < count; i++)
+    {
+        auto light = std::make_unique<PointLightComponent>(this);
+
+        float t = (float)i / count;
+
+        float radius = 0.5f + t * 3.0f;
+        float speed = 1.0f + t * 2.0f;
+        Vector3 color =
+        {
+            RandomRange(0.4f, 1.0f),
+            RandomRange(0.4f, 1.0f),
+            RandomRange(0.4f, 1.0f)
+        };
+
+        light->SetColor(color);
+        light->SetIntensity(1.0f);
+        light->SetRadius(1.0f);
+
+
+        float angle = t * DirectX::XM_2PI;
+        Vector3 offset =
+        {
+            cosf(angle) * radius,
+            0,
+            sinf(angle) * radius
+        };
+
+        light->GetTransform()->SetPosition(mBall->GetTransform()->GetPosition() + offset);
+
+        auto motion = std::make_unique<CelestialMotionComponent>(
+            this,
+            light.get(),
+            mBall,
+            radius,
+            speed,
+            0.0f
+        );
+
+        AddComponent(std::move(motion));
+
+        AddLight(light.get());
+        AddComponent(std::move(light));
+    }
 }
 
 void KatamariDamacyGame::UpdateCamera()

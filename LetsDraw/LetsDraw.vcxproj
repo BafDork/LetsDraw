@@ -159,6 +159,7 @@
     <ClCompile Include="src\KatamariDamacy\WaveSurfaceComponent.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Engine\Graphics\RenderableComponent.cpp" />
+    <ClCompile Include="src\Planetarium\CelestialMotionComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Engine\Camera\CameraBase.h" />
@@ -184,6 +185,7 @@
     <ClInclude Include="src\Engine\Graphics\RenderableComponent.h" />
     <ClInclude Include="src\Engine\Graphics\Vertex.h" />
     <ClInclude Include="src\KatamariDamacy\WaveSurfaceComponent.h" />
+    <ClInclude Include="src\Planetarium\CelestialMotionComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

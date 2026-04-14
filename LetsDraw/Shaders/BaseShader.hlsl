@@ -145,7 +145,7 @@ float4 PSMain(PS_IN input) : SV_Target
 
         // Specular
         float3 R = reflect(-L, N);
-        float spec = pow(max(dot(R, V), 0.0f), 32.0f);
+        float spec = pow(max(dot(R, V), 0.0f), 16.0f);
         float3 specular = spec * lightColor;
 
         // Тени только для directional

@@ -31,6 +31,7 @@ private:
     void CreateMike(const Vector3& position);
     void CreateKnuckles(const Vector3& position);
     void SnapToGround(TransformComponent* transform, float heightOffset);
+    void SpawnLightVortex(int count);
 
 private:
     CameraBase* mFpsCamera = nullptr;
