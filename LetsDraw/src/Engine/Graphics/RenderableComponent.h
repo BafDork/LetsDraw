@@ -71,9 +71,9 @@ private:
     ComPtr<ID3D11Buffer> mVertexBuffer;
     ComPtr<ID3D11Buffer> mIndexBuffer;
     ComPtr<ID3D11Buffer> mConstantBuffer;
-    ComPtr<ID3D11Buffer> mLightProjBuffer;
     ComPtr<ID3D11Buffer> mMaterialBuffer;
     ComPtr<ID3D11Buffer> mLightBuffer;
+    ComPtr<ID3D11Buffer> mShadowBuffer;
 
     ComPtr<ID3D11ShaderResourceView> mTextureSRV;
     ComPtr<ID3D11SamplerState> mSamplerState;
@@ -87,8 +87,10 @@ private:
 
     struct CBMatrix
     {
-        Matrix worldViewProj;
         Matrix world;
+        Matrix cameraWVP;
+        Vector3 cameraPos;
+		float padding;
     };
 
     struct CBMaterial
@@ -97,12 +99,29 @@ private:
         float padding[3];
     };
 
-    struct CBLight
+    struct Light
     {
-        Vector3 lightDir;
-        float padding1;
+        Vector3 position;
+        float radius;
 
-        Vector3 cameraPos;
+        Vector3 direction;
         float intensity;
+
+        Vector3 color;
+        float type;
+    };
+
+    static const int MAX_LIGHTS = 256;
+
+    struct LightCB
+    {
+        Light lights[MAX_LIGHTS];
+        int lightCount;
+        float padding[3];
+    };
+
+    struct ShadowCB
+    {
+        Matrix lightWVP;
     };
 };

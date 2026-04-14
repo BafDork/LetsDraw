@@ -4,6 +4,7 @@
 #include "Engine\Camera\CameraBase.h"
 #include "Engine\GameApp.h"
 #include "Engine\Graphics\Light\DirectionalLightComponent.h"
+#include "Engine\Graphics\Light\PointLightComponent.h"
 #include "Engine\Graphics\Mesh\ModelImporter.h"
 #include "RenderableComponent.h"
 
@@ -165,7 +166,14 @@ void RenderableComponent::CreateConstantBuffer()
 	constantBufferDesc.CPUAccessFlags = 0;
 
 	mDevice->CreateBuffer(&constantBufferDesc, nullptr, &mConstantBuffer);
-	mDevice->CreateBuffer(&constantBufferDesc, nullptr, &mLightProjBuffer);
+	
+	D3D11_BUFFER_DESC shadowBufferDesc{};
+	shadowBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	shadowBufferDesc.ByteWidth = sizeof(ShadowCB);
+	shadowBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	shadowBufferDesc.CPUAccessFlags = 0;
+
+	mDevice->CreateBuffer(&shadowBufferDesc, nullptr, &mShadowBuffer);
 }
 
 void RenderableComponent::CreateMaterialBuffer()
@@ -182,7 +190,7 @@ void RenderableComponent::CreateLightBuffer()
 {
 	D3D11_BUFFER_DESC lightBufferDesc{};
 	lightBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	lightBufferDesc.ByteWidth = sizeof(CBLight);
+	lightBufferDesc.ByteWidth = sizeof(LightCB);
 	lightBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
 	mDevice->CreateBuffer(&lightBufferDesc, nullptr, &mLightBuffer);
@@ -220,14 +228,14 @@ void RenderableComponent::DrawShadow()
 	DirectionalLightComponent* light = mGameApp->GetMainLight();
 	if (!light) return;
 
-	Matrix world = mTransform->GetWorldMatrix();
-	Matrix wvp = world * light->GetLightViewProj();
+	Matrix worldMatrix = mTransform->GetWorldMatrix();
+	Matrix lightWVP = worldMatrix * light->GetLightViewProj();
 
-	CBMatrix cb{};
-	cb.worldViewProj = XMMatrixTranspose(wvp);
+	ShadowCB shadowCB{};
+	shadowCB.lightWVP = XMMatrixTranspose(lightWVP);
 
-	mContext->UpdateSubresource(mConstantBuffer.Get(), 0, nullptr, &cb, 0, 0);
-	mContext->VSSetConstantBuffers(0, 1, mConstantBuffer.GetAddressOf());
+	mContext->UpdateSubresource(mShadowBuffer.Get(), 0, nullptr, &shadowCB, 0, 0);
+	mContext->VSSetConstantBuffers(0, 1, mShadowBuffer.GetAddressOf());
 
 	mContext->VSSetShader(mShadowShader->GetVS(), nullptr, 0);
 	mContext->PSSetShader(nullptr, nullptr, 0);
@@ -249,9 +257,10 @@ void RenderableComponent::Draw()
 	CameraBase* camera = mGameApp->GetCamera();
 
 	Matrix worldMatrix = mTransform->GetWorldMatrix();
-	Matrix worldViewProjection = worldMatrix * camera->GetView() * camera->GetProjection();
+	Matrix cameraWVP = worldMatrix * camera->GetView() * camera->GetProjection();
 	bufferMatrix.world = XMMatrixTranspose(worldMatrix);
-	bufferMatrix.worldViewProj = XMMatrixTranspose(worldViewProjection);
+	bufferMatrix.cameraWVP = XMMatrixTranspose(cameraWVP);
+	bufferMatrix.cameraPos = camera->GetTransform()->GetPosition();
 
 	mContext->UpdateSubresource(mConstantBuffer.Get(), 0, nullptr, &bufferMatrix, 0, 0);
 	mContext->VSSetConstantBuffers(0, 1, mConstantBuffer.GetAddressOf());
@@ -262,22 +271,50 @@ void RenderableComponent::Draw()
 	mContext->UpdateSubresource(mMaterialBuffer.Get(), 0, nullptr, &materialBuffer, 0, 0);
 	mContext->PSSetConstantBuffers(1, 1, mMaterialBuffer.GetAddressOf());
 
-	CBLight lightBuffer{};
-	DirectionalLightComponent* light = mGameApp->GetMainLight();
+	LightCB lightBuffer{};
+	auto lights = mGameApp->GetLights();
 
-	lightBuffer.lightDir = light->GetDirection();
-	lightBuffer.intensity = light->GetIntensity();
-	lightBuffer.cameraPos = mGameApp->GetCamera()->GetTransform()->GetPosition();
+	int count = 0;
+
+	for (auto* light : lights)
+	{
+		if (count >= MAX_LIGHTS)
+			break;
+
+		Light& lightData = lightBuffer.lights[count];
+
+		lightData.position = light->GetTransform()->GetPosition();
+		lightData.intensity = light->GetIntensity();
+		lightData.color = light->GetColor();
+		lightData.type = static_cast<float>(light->GetType());
+
+		if (light->GetType() == LightType::Directional)
+		{
+			auto* dir = static_cast<DirectionalLightComponent*>(light);
+			lightData.direction = dir->GetDirection();
+			lightData.radius = 0.0f;
+		}
+		else if (light->GetType() == LightType::Point)
+		{
+			auto* point = static_cast<PointLightComponent*>(light);
+			lightData.direction = Vector3::Zero;
+			lightData.radius = point->GetRadius();
+		}
+
+		count++;
+	}
+
+	lightBuffer.lightCount = count;
 
 	mContext->UpdateSubresource(mLightBuffer.Get(), 0, nullptr, &lightBuffer, 0, 0);
 	mContext->PSSetConstantBuffers(2, 1, mLightBuffer.GetAddressOf());
 
-	CBMatrix lightMatrix{};
-	Matrix wvp = worldMatrix * light->GetLightViewProj();
-	lightMatrix.worldViewProj = XMMatrixTranspose(wvp);
+	ShadowCB shadowCB{};
+	Matrix lightWVP = worldMatrix * mGameApp->GetMainLight()->GetLightViewProj();
+	shadowCB.lightWVP = XMMatrixTranspose(lightWVP);
 
-	mContext->UpdateSubresource(mLightProjBuffer.Get(), 0, nullptr, &lightMatrix, 0, 0);
-	mContext->VSSetConstantBuffers(3, 1, mLightProjBuffer.GetAddressOf());
+	mContext->UpdateSubresource(mShadowBuffer.Get(), 0, nullptr, &shadowCB, 0, 0);
+	mContext->VSSetConstantBuffers(3, 1, mShadowBuffer.GetAddressOf());
 
 	mContext->IASetInputLayout(mBaseShader->GetLayout());
 	mContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -297,7 +334,7 @@ void RenderableComponent::Draw()
 
 	ID3D11SamplerState* samplers2[] = { mShadowSampler.Get() };
 	mContext->PSSetSamplers(1, 1, samplers2);
-	ID3D11ShaderResourceView* shadowSRV = light->GetShadowSRV();
+	ID3D11ShaderResourceView* shadowSRV = mGameApp->GetMainLight()->GetShadowSRV();
 	mContext->PSSetShaderResources(1, 1, &shadowSRV);
 
 	mContext->RSSetState(mRastState.Get());

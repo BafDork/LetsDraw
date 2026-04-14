@@ -20,29 +20,42 @@ struct PS_IN
 
 cbuffer CBMatrix : register(b0)
 {
-    matrix cameraWVP;
-    matrix world;
+    float4x4 world;
+    float4x4 cameraWVP;
+    float3 cameraPos;
+    float padding1;
 }
 
 cbuffer CBMaterial : register(b1)
 {
     int hasTexture;
+    float3 padding2;
+};
+
+struct Light
+{
+    float3 position;
+    float radius;
+
+    float3 direction;
+    float intensity;
+
+    float3 color;
+    float type;
+};
+
+#define MAX_LIGHTS 256
+
+cbuffer LightData : register(b2)
+{
+    Light lights[MAX_LIGHTS];
+    int lightCount;
     float3 padding;
 };
 
-cbuffer CBLight : register(b2)
+cbuffer ShadowData : register(b3)
 {
-    float3 lightDir;
-    float pad1;
-
-    float3 cameraPos;
-    float intensity;
-};
-
-cbuffer CBLightMatrix : register(b3)
-{
-    matrix lightWVP;
-    matrix pading;
+    float4x4 lightWVP;
 };
 
 Texture2D diffuseTexture : register(t0);
@@ -61,8 +74,8 @@ PS_IN VSMain(VS_IN input)
     output.worldPos = worldPos.xyz;
 
     // rotation-only transform
-    float3x3 world3x3 = (float3x3) world;
-    output.normal = normalize(mul(input.normal, world3x3));
+    float3x3 normalMatrix = (float3x3) world;
+    output.normal = normalize(mul(input.normal, normalMatrix));
     
     output.lightPos = mul(input.pos, lightWVP);
 
@@ -94,24 +107,69 @@ float CalculateShadow(float4 lightPos)
 float4 PSMain(PS_IN input) : SV_Target
 {
     float3 N = normalize(input.normal);
-    float3 L = normalize(-lightDir);
     float3 V = normalize(cameraPos - input.worldPos);
-    
+
     float shadow = CalculateShadow(input.lightPos);
 
-    float3 ambient = 0.25;
+    float3 totalLighting = 0.0f;
 
-    float diff = max(dot(N, L), 0.0);
-    float3 diffuse = diff * shadow;
+    for (int i = 0; i < lightCount; i++)
+    {
+        Light light = lights[i];
 
-    float3 R = reflect(-L, N);
-    float specFactor = pow(max(dot(R, V), 0.0), 32.0);
-    float3 specular = specFactor * shadow;
+        float3 L;
+        float attenuation = 1.0f;
 
+        // Directional
+        if (light.type == 0)
+        {
+            L = normalize(-light.direction);
+        }
+        // Point
+        else if (light.type == 1)
+        {
+            float3 toLight = light.position - input.worldPos;
+            float dist = length(toLight);
+
+            L = toLight / dist;
+
+            attenuation = saturate(1.0f - dist / light.radius);
+            attenuation *= attenuation;
+        }
+
+        float3 lightColor = light.color * light.intensity * attenuation;
+
+        // Diffuse
+        float diff = max(dot(N, L), 0.0f);
+        float3 diffuse = diff * lightColor;
+
+        // Specular
+        float3 R = reflect(-L, N);
+        float spec = pow(max(dot(R, V), 0.0f), 32.0f);
+        float3 specular = spec * lightColor;
+
+        // Тени только для directional
+        if (light.type == 0)
+        {
+            diffuse *= shadow;
+            specular *= shadow;
+        }
+
+        totalLighting += diffuse + specular;
+    }
+
+    // Ambient
+    float3 ambient = float3(0.2f, 0.2f, 0.2f);
+
+    // Base color
     float4 baseColor = input.col;
-    if (hasTexture == 1)
-        baseColor *= diffuseTexture.Sample(samLinear, input.uv);
 
-    float3 lighting = ambient + diffuse + specular;
-    return float4(baseColor.rgb * lighting * intensity, baseColor.a);
+    if (hasTexture == 1)
+    {
+        baseColor *= diffuseTexture.Sample(samLinear, input.uv);
+    }
+
+    float3 finalColor = baseColor.rgb * (ambient + totalLighting);
+
+    return float4(finalColor, baseColor.a);
 }

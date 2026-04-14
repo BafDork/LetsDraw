@@ -6,7 +6,7 @@ class PointLightComponent : public BaseLightComponent
 {
 public:
     PointLightComponent(GameApp* game) :
-        BaseLightComponent(game) {}
+        BaseLightComponent(game, LightType::Point) {}
 
     void SetRadius(float radius) { mRadius = radius; }
     float GetRadius() const { return mRadius; }

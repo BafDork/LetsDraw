@@ -256,11 +256,6 @@ void GameApp::Draw()
         component->Draw();
 }
 
-void GameApp::AddComponent(std::unique_ptr<GameComponent> component)
-{
-    mComponents.push_back(std::move(component));
-}
-
 void GameApp::EndFrame()
 {
     mSwapChain->Present(1, 0);

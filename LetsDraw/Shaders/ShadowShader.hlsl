@@ -1,7 +1,6 @@
-cbuffer CBMatrix : register(b0)
+cbuffer ShadowData : register(b0)
 {
-    matrix lightWVP;
-    matrix pading;
+    float4x4 lightWVP;
 };
 
 struct VS_IN

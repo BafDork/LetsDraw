@@ -2,6 +2,8 @@
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
 
+#include "Engine\Graphics\Light\BaseLightComponent.h"
+#include "Engine\Graphics\Light\DirectionalLightComponent.h"
 #include "Engine\Window\DisplayWin32.h"
 #include "Engine\Window\InputDevice.h"
 #include "GameComponent.h"
@@ -9,13 +11,13 @@
 #include <chrono>
 #include <d3d11.h>
 #include <memory>
+#include <vector>
 #include <wrl.h>
 
 using Microsoft::WRL::ComPtr;
 
 class GameComponent;
 class CameraBase;
-class DirectionalLightComponent;
 
 class GameApp
 {
@@ -35,8 +37,10 @@ public:
     int GetClientWidth() const { return mClientWidth; }
 	int GetClientHeight() const { return mClientHeight; }
     
-    void SetMainLight(DirectionalLightComponent* light) { mMainLight = light; }
+    void SetMainLight(DirectionalLightComponent* light) { mMainLight = light; AddLight(light); }
     DirectionalLightComponent* GetMainLight() const { return mMainLight; }
+
+    const std::vector<BaseLightComponent*>& GetLights() const { return mLights; }
 
 protected:
     virtual void CreateCamera();
@@ -44,7 +48,8 @@ protected:
     virtual void OnCreateGame() {}
     virtual void OnUpdate(float deltaTime) {}
 
-    void AddComponent(std::unique_ptr<GameComponent> component);
+    void AddComponent(std::unique_ptr<GameComponent> component) { mComponents.push_back(std::move(component)); }
+    void AddLight(BaseLightComponent* light) { mLights.push_back(light); }
 
 protected:
     int mClientWidth;
@@ -54,6 +59,7 @@ protected:
     std::unique_ptr<InputDevice> mInput;
 
     std::vector<std::unique_ptr<GameComponent>> mComponents;
+    std::vector<BaseLightComponent*> mLights;
 
     ComPtr<ID3D11Device> mDevice;
     ComPtr<ID3D11DeviceContext> mContext;

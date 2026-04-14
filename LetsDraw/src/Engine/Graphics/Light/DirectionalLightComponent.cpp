@@ -2,7 +2,7 @@
 #include "Engine/GameApp.h"
 
 DirectionalLightComponent::DirectionalLightComponent(GameApp* game)
-    : BaseLightComponent(game)
+    : BaseLightComponent(game, LightType::Directional)
 {
     mDirection.Normalize();
 }
