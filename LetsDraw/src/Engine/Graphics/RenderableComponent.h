@@ -76,6 +76,7 @@ private:
     ComPtr<ID3D11Buffer> mShadowBuffer;
 
     ComPtr<ID3D11ShaderResourceView> mTextureSRV;
+    ComPtr<ID3D11ShaderResourceView> mShadowMaskSRV;
     ComPtr<ID3D11SamplerState> mSamplerState;
     ComPtr<ID3D11SamplerState> mShadowSampler;
 

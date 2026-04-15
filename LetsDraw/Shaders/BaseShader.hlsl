@@ -64,6 +64,8 @@ SamplerState samLinear : register(s0);
 Texture2D shadowMap : register(t1);
 SamplerComparisonState shadowSampler : register(s1);
 
+Texture2D shadowMask : register(t2);
+
 PS_IN VSMain(VS_IN input)
 {
     PS_IN output;
@@ -104,13 +106,25 @@ float CalculateShadow(float4 lightPos)
     return shadow;
 }
 
+float SampleShadowMask(float3 worldPos)
+{
+    float scale = 0.1f;
+
+    float2 uv = worldPos.xz * scale;
+
+    float mask = shadowMask.Sample(samLinear, uv).r;
+
+    return mask;
+}
+
 float4 PSMain(PS_IN input) : SV_Target
 {
     float3 N = normalize(input.normal);
     float3 V = normalize(cameraPos - input.worldPos);
 
     float shadow = CalculateShadow(input.lightPos);
-
+    float shadowMaskValue = SampleShadowMask(input.worldPos);
+    
     float3 totalLighting = 0.0f;
 
     for (int i = 0; i < lightCount; i++)
@@ -151,8 +165,10 @@ float4 PSMain(PS_IN input) : SV_Target
         // Тени только для directional
         if (light.type == 0)
         {
-            diffuse *= shadow;
-            specular *= shadow;
+            float finalShadow = shadow * shadowMaskValue;
+            
+            diffuse *= finalShadow;
+            specular *= finalShadow;
         }
 
         totalLighting += diffuse + specular;

@@ -58,11 +58,7 @@ void RenderableComponent::Initialize()
 	CreateConstantBuffer();
 	CreateMaterialBuffer();
 	CreateLightBuffer();
-
-	if (mTextureSRV)
-	{
-		CreateSamplerState();
-	}
+	CreateSamplerState();
 
 	D3D11_SAMPLER_DESC desc{};
 	desc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
@@ -80,6 +76,8 @@ void RenderableComponent::Initialize()
 	desc.MaxAnisotropy = 1;
 
 	HRESULT hr = mDevice->CreateSamplerState(&desc, &mShadowSampler);
+
+	LoadTexture("./Content/ShadowMask/ShadowMaskPattern.dds", mShadowMaskSRV);
 
 	CreateShaders();
 	CreateGeometry();
@@ -325,10 +323,11 @@ void RenderableComponent::Draw()
 	mContext->VSSetShader(mBaseShader->GetVS(), nullptr, 0);
 	mContext->PSSetShader(mBaseShader->GetPS(), nullptr, 0);
 
+	ID3D11SamplerState* samplers[] = { mSamplerState.Get() };
+	mContext->PSSetSamplers(0, 1, samplers);
+
 	if (mTextureSRV)
 	{
-		ID3D11SamplerState* samplers[] = { mSamplerState.Get() };
-		mContext->PSSetSamplers(0, 1, samplers);
 		mContext->PSSetShaderResources(0, 1, mTextureSRV.GetAddressOf());
 	}
 
@@ -336,6 +335,8 @@ void RenderableComponent::Draw()
 	mContext->PSSetSamplers(1, 1, samplers2);
 	ID3D11ShaderResourceView* shadowSRV = mGameApp->GetMainLight()->GetShadowSRV();
 	mContext->PSSetShaderResources(1, 1, &shadowSRV);
+
+	mContext->PSSetShaderResources(2, 1, mShadowMaskSRV.GetAddressOf());
 
 	mContext->RSSetState(mRastState.Get());
 
