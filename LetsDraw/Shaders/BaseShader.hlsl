@@ -165,8 +165,8 @@ float4 PSMain(PS_IN input) : SV_Target
         // Тени только для directional
         if (light.type == 0)
         {
-            float finalShadow = shadow * shadowMaskValue;
-            
+            float finalShadow = shadow + (1.0f - shadow) * shadowMaskValue;
+
             diffuse *= finalShadow;
             specular *= finalShadow;
         }
